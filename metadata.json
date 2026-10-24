@@ -1,0 +1,6 @@
+{
+  "name": "TrackTitans - Institutional FDR Lifecycle Management",
+  "description": "Smart India Hackathon SIH26265 MVP for digitizing institutional Security Deposits and Fixed Deposit Receipts (FDRs) across technical institutions, banks, and AICTE administrators.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
