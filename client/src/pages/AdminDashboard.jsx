@@ -125,48 +125,48 @@ export function AdminDashboard() {
   const pendingReleaseCount = fdrs.filter(f => f.status === 'release_requested').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-slate-50/40">
       {/* Banner */}
-      <div className="rounded-2xl bg-[#F7F8FA] border border-[#E5E7EB] p-6 sm:p-8">
+      <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4B5563] mb-2">
-              <ShieldCheck className="w-4 h-4 text-[#64748B]" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-purple-700 bg-purple-50 border border-purple-200 px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+              <ShieldCheck className="w-4 h-4 text-purple-600" />
               <span>AICTE National Regulatory Portal</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Institutional FDR & Security Deposit Oversight
             </h1>
-            <p className="text-xs text-[#6B7280] mt-1">
+            <p className="text-sm text-slate-500 mt-1">
               National monitoring, commercial bank lien verification, and security deposit release sanctions
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setShow3DVault(!show3DVault)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-gray-50 text-[#111827] border border-[#E5E7EB] font-medium text-xs transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-sm transition-colors shadow-2xs cursor-pointer"
             >
-              <Box className="w-3.5 h-3.5 text-[#64748B]" />
+              <Box className="w-4 h-4 text-slate-500" />
               <span>{show3DVault ? 'Hide 3D Visualizer' : 'Inspect 3D Escrow Vault'}</span>
             </button>
 
             <button
               onClick={() => setIsEmailCenterOpen(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white hover:bg-gray-50 text-[#111827] border border-[#E5E7EB] text-xs font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-sm font-semibold transition-colors shadow-2xs cursor-pointer"
               title="Open Nodemailer Simulated Outbox & Delivery Center"
             >
-              <Mail className="w-3.5 h-3.5 text-[#64748B]" />
+              <Mail className="w-4 h-4 text-slate-500" />
               <span>Nodemailer Email Center</span>
             </button>
 
             <button
               onClick={handleTriggerMaturityCron}
               disabled={triggeringJob}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white text-xs font-medium transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
               title="Execute the 9:00 AM IST automated cron job to check 30, 15, and 7 day alerts"
             >
-              <Play className={`w-3.5 h-3.5 text-white ${triggeringJob ? 'animate-spin' : ''}`} />
+              <Play className={`w-4 h-4 text-white ${triggeringJob ? 'animate-spin' : ''}`} />
               <span>{triggeringJob ? 'Running Job...' : 'Run Daily 9 AM Alert Job'}</span>
             </button>
           </div>
@@ -219,9 +219,9 @@ export function AdminDashboard() {
                   />
                   <YAxis stroke="#6B7280" fontSize={11} />
                   <Tooltip
-                    contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E5E7EB', borderRadius: '8px', color: '#111827' }}
+                    contentStyle={{ backgroundColor: '#FFFFFF', borderColor: '#E2E8F0', borderRadius: '12px', color: '#0F172A', boxShadow: '0 4px 12px rgba(0,0,0,0.06)' }}
                   />
-                  <Bar dataKey="count" fill="#1F2937" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="count" fill="#3B82F6" radius={[6, 6, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -289,17 +289,19 @@ export function AdminDashboard() {
       {/* Main Registry Table with Filters */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-[#111827]">Full National FDR Registry</span>
-            <span className="text-xs text-[#6B7280] font-mono tabular-nums">({fdrs.length} records)</span>
+          <div className="flex items-center gap-2.5">
+            <span className="text-base font-bold text-slate-900">Full National FDR Registry</span>
+            <span className="text-xs text-slate-500 font-mono tabular-nums px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">
+              {fdrs.length} records
+            </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {/* Filter by status dropdown */}
             <select
               value={filters.status || 'all'}
               onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-              className="rounded-lg bg-white border border-[#E5E7EB] px-3 py-1.5 text-xs text-[#111827] focus:outline-none focus:border-[#1F2937]"
+              className="rounded-xl bg-white border border-slate-200 px-3.5 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 shadow-2xs font-medium cursor-pointer"
             >
               <option value="all">All Statuses</option>
               <option value="active">Active & Compliant</option>
@@ -313,14 +315,14 @@ export function AdminDashboard() {
             </select>
 
             {/* Search */}
-            <div className="relative min-w-[240px]">
-              <Search className="w-3.5 h-3.5 text-[#9CA3AF] absolute left-3 top-3" />
+            <div className="relative min-w-[280px]">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
               <input
                 type="text"
                 placeholder="Search FDR, institution, or bank..."
                 value={filters.search || ''}
                 onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3.5 py-1.5 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 shadow-2xs"
               />
             </div>
           </div>

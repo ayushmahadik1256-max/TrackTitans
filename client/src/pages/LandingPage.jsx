@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAuth } from '../hooks/useAuth.js';
 import {
   ArrowRight, ArrowUpRight, BellRing, Building2, Check, ChevronDown,
   CircleCheck, Clock3, FileCheck2, Fingerprint, Landmark, LockKeyhole,
-  Menu, Shield, ShieldCheck, Sparkles, WalletCards, X,
+  Menu, Shield, ShieldCheck, Sparkles, WalletCards, X, LogOut,
 } from 'lucide-react';
 
 const reveal = { hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { duration: .65, ease: [.22, 1, .36, 1] } } };
@@ -36,9 +37,9 @@ function HeroVisual() {
 }
 
 const roles = [
-  { icon: Building2, title: 'Colleges', eyebrow: 'INSTITUTION', text: 'Register deposits, upload receipts and stay ahead of every maturity date.', color: 'blue', items: ['One place for every FDR', 'Renewal and refund requests'] },
-  { icon: Landmark, title: 'Banks', eyebrow: 'VERIFICATION PARTNER', text: 'Verify authenticity and confirm lien marks through a clear review queue.', color: 'mint', items: ['Structured verification queue', 'Instant lien confirmation'] },
-  { icon: ShieldCheck, title: 'AICTE', eyebrow: 'REGULATORY OVERSIGHT', text: 'See the full picture of secured funds, compliance and approvals in real time.', color: 'violet', items: ['Live fund visibility', 'Audit-ready oversight'] },
+  { id: 'institution', icon: Building2, title: 'Colleges', eyebrow: 'INSTITUTION', path: '/institution', text: 'Register deposits, upload receipts and stay ahead of every maturity date.', color: 'blue', items: ['One place for every FDR', 'Renewal and refund requests'] },
+  { id: 'bank', icon: Landmark, title: 'Banks', eyebrow: 'VERIFICATION PARTNER', path: '/bank', text: 'Verify authenticity and confirm lien marks through a clear review queue.', color: 'mint', items: ['Structured verification queue', 'Instant lien confirmation'] },
+  { id: 'aicte_admin', icon: ShieldCheck, title: 'AICTE', eyebrow: 'REGULATORY OVERSIGHT', path: '/admin', text: 'See the full picture of secured funds, compliance and approvals in real time.', color: 'violet', items: ['Live fund visibility', 'Audit-ready oversight'] },
 ];
 
 const features = [
@@ -64,6 +65,70 @@ function DashboardMock() {
 export function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
+
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const isDivertRequested = searchParams.get('divert') === 'true';
+  const [countdown, setCountdown] = useState(3);
+  const [isDivertPaused, setIsDivertPaused] = useState(false);
+
+  const getDashboardPath = (role) => {
+    if (role === 'institution') return '/institution';
+    if (role === 'bank') return '/bank';
+    if (role === 'aicte_admin') return '/admin';
+    return '/institution';
+  };
+
+  const getRoleLabel = (role) => {
+    if (role === 'institution') return 'Institution Portal';
+    if (role === 'bank') return 'Bank Verification Portal';
+    if (role === 'aicte_admin') return 'AICTE Admin Console';
+    return 'Dashboard';
+  };
+
+  const getRoleName = (role) => {
+    if (role === 'institution') return 'College / Institution';
+    if (role === 'bank') return 'Commercial Bank';
+    if (role === 'aicte_admin') return 'AICTE Regulatory Admin';
+    return 'User';
+  };
+
+  // Automated diversion countdown when divert query parameter is present and user is authenticated
+  useEffect(() => {
+    if (!currentUser || !isDivertRequested || isDivertPaused) return;
+
+    if (countdown <= 0) {
+      navigate(getDashboardPath(currentUser.role));
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [currentUser, isDivertRequested, isDivertPaused, countdown, navigate]);
+
+  const handleManualDivert = (targetPath) => {
+    if (currentUser) {
+      navigate(targetPath || getDashboardPath(currentUser.role));
+    } else {
+      navigate('/login');
+    }
+  };
+
+  const handleStayOnLanding = () => {
+    setIsDivertPaused(true);
+    setSearchParams({}, { replace: true });
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate('/');
+  };
+
   const faqs = [
     ['What is TrackTitans?', 'TrackTitans is a shared digital platform for managing institutional security deposits and their Fixed Deposit Receipts from registration through refund.'],
     ['Who can use the platform?', 'Colleges, participating banks and AICTE administrators each get role-based tools designed around their part of the deposit lifecycle.'],
@@ -71,34 +136,410 @@ export function LandingPage() {
     ['Will the platform alert us before maturity?', 'Yes. Automated reminders help teams plan renewals or refunds before maturity dates, with clear visibility into upcoming actions.'],
   ];
 
-  return <div className="tt-landing" id="top">
-    <div className="tt-progress" />
-    <header className="tt-marketing-nav"><div className="tt-nav-inner"><Brand /><nav className={menuOpen ? 'tt-nav-links is-open' : 'tt-nav-links'}><a href="#features" onClick={() => setMenuOpen(false)}>Features</a><a href="#workflow" onClick={() => setMenuOpen(false)}>How it works</a><a href="#roles" onClick={() => setMenuOpen(false)}>For everyone</a><a href="#faq" onClick={() => setMenuOpen(false)}>FAQ</a></nav><div className="tt-nav-actions"><Link className="tt-login" to="/login">Log in</Link><Link className="tt-button tt-button-nav" to="/register">Request a demo <ArrowUpRight size={15}/></Link></div><button className="tt-menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}>{menuOpen ? <X/> : <Menu/>}</button></div></header>
+  return (
+    <div className="tt-landing" id="top">
+      <div className="tt-progress" />
 
-    <main>
-      <section className="tt-hero tt-container"><div className="tt-hero-copy"><div className="tt-eyebrow"><span className="tt-eyebrow-icon"><Sparkles size={13}/></span> TRUST, TRACKED IN REAL TIME <span className="tt-eyebrow-line"/></div><h1>Every deposit.<br/><span>Tracked. Verified.<br className="tt-mobile-break"/> Secured.</span></h1><p className="tt-hero-lede">A paperless, real-time escrow platform connecting colleges, banks and AICTE — so no FDR ever expires unnoticed.</p><div className="tt-hero-actions"><Link to="/register" className="tt-button">Get started <ArrowRight size={17}/></Link><a href="#workflow" className="tt-watch"><span>▶</span> See how it works</a></div><div className="tt-trust-row"><span><Check/>100% paperless</span><i/><span><Check/>Real-time alerts</span><i/><span><Check/>Bank-grade security</span></div></div><HeroVisual/></section>
+      {/* Post-Login Diversion Banner (White + Light Theme with High Contrast) */}
+      {currentUser && isDivertRequested && (
+        <div className="bg-white/95 backdrop-blur-md border-b border-slate-200 text-slate-800 px-4 py-3.5 shadow-sm sticky top-0 z-[65]">
+          <div className="tt-container flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+            <div className="flex items-center gap-3">
+              <span className="flex h-3 w-3 relative shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-600"></span>
+              </span>
+              <div>
+                <span className="text-slate-900">
+                  Welcome back, <strong className="font-semibold text-slate-950">{currentUser.full_name || currentUser.email}</strong>
+                </span>
+                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                  {getRoleName(currentUser.role)}
+                </span>
+                {!isDivertPaused ? (
+                  <span className="ml-2 text-slate-500 font-normal">
+                    — Diverting to your dashboard in <strong className="font-semibold text-blue-700 font-mono text-base">{countdown}s</strong>...
+                  </span>
+                ) : (
+                  <span className="ml-2 text-amber-700 font-medium">
+                    — Auto-diversion paused. You can review the platform details below.
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 shrink-0">
+              <button
+                onClick={() => handleManualDivert()}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition shadow-xs cursor-pointer"
+              >
+                Go to Dashboard Now <ArrowRight size={15} />
+              </button>
+              {!isDivertPaused && (
+                <button
+                  onClick={handleStayOnLanding}
+                  className="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-medium transition cursor-pointer border border-slate-200"
+                >
+                  Stay on Landing Page
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
-      <section className="tt-proof"><div className="tt-container tt-proof-inner"><p>BUILT FOR TRUST ACROSS THE DEPOSIT LIFECYCLE</p><div className="tt-proof-logos"><span><Building2/> Colleges</span><i/><span><Landmark/> Banks</span><i/><span><Shield/> AICTE</span><i/><span><LockKeyhole/> Secure by design</span></div></div></section>
+      <header className="tt-marketing-nav">
+        <div className="tt-nav-inner">
+          <Brand />
+          <nav className={menuOpen ? 'tt-nav-links is-open' : 'tt-nav-links'}>
+            <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
+            <a href="#workflow" onClick={() => setMenuOpen(false)}>How it works</a>
+            <a href="#roles" onClick={() => setMenuOpen(false)}>For everyone</a>
+            <a href="#faq" onClick={() => setMenuOpen(false)}>FAQ</a>
+          </nav>
+          <div className="tt-nav-actions">
+            {currentUser ? (
+              <div className="flex items-center gap-3">
+                <span className="hidden sm:inline-block text-xs font-semibold text-[#53677d] truncate max-w-[170px]" title={currentUser.full_name || currentUser.email}>
+                  {currentUser.full_name || currentUser.email}
+                </span>
+                <button
+                  onClick={() => handleManualDivert()}
+                  className="tt-button tt-button-nav cursor-pointer"
+                >
+                  Go to Dashboard <ArrowRight size={14} />
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="text-xs font-semibold text-[#8a9bb0] hover:text-rose-600 transition cursor-pointer"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link className="tt-login" to="/login">Log in</Link>
+                <Link className="tt-button tt-button-nav" to="/register">Create account <ArrowUpRight size={15}/></Link>
+              </>
+            )}
+          </div>
+          <button className="tt-menu-button" onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}>
+            {menuOpen ? <X/> : <Menu/>}
+          </button>
+        </div>
+      </header>
 
-      <section className="tt-stats tt-container"><motion.div className="tt-stats-intro" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-section-kicker">A clearer way forward</span><h2>Confidence at<br/>every step.</h2><p>Bring every institution and every FDR into one dependable view.</p></motion.div><div className="tt-stat-grid"><motion.div className="tt-stat" custom={0} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-stat-icon"><FileCheck2/></span><strong>2,400<span>+</span></strong><p>FDRs tracked<small>Illustrative platform metric</small></p></motion.div><motion.div className="tt-stat" custom={1} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-stat-icon mint"><ShieldCheck/></span><strong>₹84<span>Cr</span></strong><p>Funds secured<small>Illustrative platform metric</small></p></motion.div><motion.div className="tt-stat" custom={2} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-stat-icon violet"><Clock3/></span><strong>0</strong><p>Missed deadlines<small>With timely maturity alerts</small></p></motion.div></div></section>
+      <main>
+        <section className="tt-hero tt-container">
+          <div className="tt-hero-copy">
+            <div className="tt-eyebrow">
+              <span className="tt-eyebrow-icon"><Sparkles size={13}/></span> TRUST, TRACKED IN REAL TIME <span className="tt-eyebrow-line"/>
+            </div>
+            <h1>Every deposit.<br/><span>Tracked. Verified.<br className="tt-mobile-break"/> Secured.</span></h1>
+            <p className="tt-hero-lede">A paperless, real-time escrow platform connecting colleges, banks and AICTE — so no FDR ever expires unnoticed.</p>
+            <div className="tt-hero-actions">
+              {currentUser ? (
+                <button onClick={() => handleManualDivert()} className="tt-button cursor-pointer">
+                  Go to {getRoleLabel(currentUser.role)} <ArrowRight size={17} />
+                </button>
+              ) : (
+                <Link to="/register" className="tt-button">Get started <ArrowRight size={17}/></Link>
+              )}
+              <a href="#workflow" className="tt-watch"><span>▶</span> See how it works</a>
+            </div>
+            <div className="tt-trust-row">
+              <span><Check/>100% paperless</span><i/><span><Check/>Real-time alerts</span><i/><span><Check/>Bank-grade security</span>
+            </div>
+          </div>
+          <HeroVisual/>
+        </section>
 
-      <section className="tt-compare-section"><div className="tt-container"><motion.div className="tt-section-heading" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-section-kicker">LESS CHASING. MORE CLARITY.</span><h2>From scattered paperwork<br/>to <span>one clear picture.</span></h2><p>Replace disconnected follow-ups with a shared, traceable process.</p></motion.div><div className="tt-compare"><motion.div className="tt-old-way" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><div className="tt-compare-label">THE OLD WAY <span>FRAGMENTED & MANUAL</span></div><div className="tt-paper-stack"><div className="tt-paper paper-back"><i/><i/><i/></div><div className="tt-paper paper-front"><span>FIXED DEPOSIT RECEIPT</span><i/><i/><div className="tt-paper-due">DUE DATE?</div></div><div className="tt-paper-alert">!</div></div><div className="tt-old-points"><span><X/> Scattered paper receipts</span><span><X/> Missed dates and follow-ups</span><span><X/> No shared status or audit trail</span></div></motion.div><div className="tt-compare-arrow"><ArrowRight/></div><motion.div className="tt-new-way" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><div className="tt-compare-label">THE TRACKTITANS WAY <span>CONNECTED & CLEAR</span></div><div className="tt-mini-workflow"><div className="tt-mini-node"><FileCheck2/><span>Submitted</span></div><i/><div className="tt-mini-node active"><ShieldCheck/><span>Verified</span></div><i/><div className="tt-mini-node"><BellRing/><span>On track</span></div></div><div className="tt-new-points"><span><Check/> One source of truth</span><span><Check/> Proactive maturity alerts</span><span><Check/> Clear ownership at every step</span></div></motion.div></div></div></section>
+        <section className="tt-proof">
+          <div className="tt-container tt-proof-inner">
+            <p>BUILT FOR TRUST ACROSS THE DEPOSIT LIFECYCLE</p>
+            <div className="tt-proof-logos">
+              <span><Building2/> Colleges</span><i/><span><Landmark/> Banks</span><i/><span><Shield/> AICTE</span><i/><span><LockKeyhole/> Secure by design</span>
+            </div>
+          </div>
+        </section>
 
-      <section id="roles" className="tt-roles-section tt-container"><motion.div className="tt-section-heading" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-section-kicker">ONE SHARED WORKFLOW</span><h2>Built for every side<br/>of the <span>process.</span></h2><p>Each team gets the tools and visibility it needs to move deposits forward.</p></motion.div><div className="tt-role-grid">{roles.map((role, i) => <motion.article key={role.title} className={`tt-role-card ${role.color}`} custom={i} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }} whileHover={{ y: -8, rotateX: 2 }}><div className="tt-role-icon"><role.icon size={22}/></div><span className="tt-role-eyebrow">{role.eyebrow}</span><h3>{role.title}</h3><p>{role.text}</p><div className="tt-role-divider"/>{role.items.map(item => <span className="tt-role-item" key={item}><Check size={15}/>{item}</span>)}</motion.article>)}</div></section>
+        <section className="tt-stats tt-container">
+          <motion.div className="tt-stats-intro" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <span className="tt-section-kicker">A clearer way forward</span>
+            <h2>Confidence at<br/>every step.</h2>
+            <p>Bring every institution and every FDR into one dependable view.</p>
+          </motion.div>
+          <div className="tt-stat-grid">
+            <motion.div className="tt-stat" custom={0} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <span className="tt-stat-icon"><FileCheck2/></span><strong>2,400<span>+</span></strong>
+              <p>FDRs tracked<small>Illustrative platform metric</small></p>
+            </motion.div>
+            <motion.div className="tt-stat" custom={1} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <span className="tt-stat-icon mint"><ShieldCheck/></span><strong>₹84<span>Cr</span></strong>
+              <p>Funds secured<small>Illustrative platform metric</small></p>
+            </motion.div>
+            <motion.div className="tt-stat" custom={2} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <span className="tt-stat-icon violet"><Clock3/></span><strong>0</strong>
+              <p>Missed deadlines<small>With timely maturity alerts</small></p>
+            </motion.div>
+          </div>
+        </section>
 
-      <section id="workflow" className="tt-workflow-section"><div className="tt-container"><motion.div className="tt-section-heading" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-section-kicker">A BETTER WAY TO MOVE</span><h2>One deposit.<br/><span>Every step accounted for.</span></h2><p>From the first upload to the final refund, progress stays visible to everyone involved.</p></motion.div><div className="tt-lifecycle"><div className="tt-life-path"/><div className="tt-life-progress"/><div className="tt-life-steps">{steps.map((step, i) => <motion.div key={step} className={`tt-life-step ${i < 3 ? 'complete' : ''}`} custom={i} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-life-node">{i < 3 ? <Check size={17}/> : <span>0{i + 1}</span>}</span><span className="tt-life-caption">{step}</span></motion.div>)}</div></div><div className="tt-lifecycle-caption"><span><i/> Clear status, shared by every team</span><span>Secure record at every step <LockKeyhole size={14}/></span></div></div></section>
+        <section className="tt-compare-section">
+          <div className="tt-container">
+            <motion.div className="tt-section-heading" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <span className="tt-section-kicker">LESS CHASING. MORE CLARITY.</span>
+              <h2>From scattered paperwork<br/>to <span>one clear picture.</span></h2>
+              <p>Replace disconnected follow-ups with a shared, traceable process.</p>
+            </motion.div>
+            <div className="tt-compare">
+              <motion.div className="tt-old-way" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                <div className="tt-compare-label">THE OLD WAY <span>FRAGMENTED & MANUAL</span></div>
+                <div className="tt-paper-stack">
+                  <div className="tt-paper paper-back"><i/><i/><i/></div>
+                  <div className="tt-paper paper-front"><span>FIXED DEPOSIT RECEIPT</span><i/><i/><div className="tt-paper-due">DUE DATE?</div></div>
+                  <div className="tt-paper-alert">!</div>
+                </div>
+                <div className="tt-old-points">
+                  <span><X/> Scattered paper receipts</span><span><X/> Missed dates and follow-ups</span><span><X/> No shared status or audit trail</span>
+                </div>
+              </motion.div>
+              <div className="tt-compare-arrow"><ArrowRight/></div>
+              <motion.div className="tt-new-way" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                <div className="tt-compare-label">THE TRACKTITANS WAY <span>CONNECTED & CLEAR</span></div>
+                <div className="tt-mini-workflow">
+                  <div className="tt-mini-node"><FileCheck2/><span>Submitted</span></div>
+                  <i/>
+                  <div className="tt-mini-node active"><ShieldCheck/><span>Verified</span></div>
+                  <i/>
+                  <div className="tt-mini-node"><BellRing/><span>On track</span></div>
+                </div>
+                <div className="tt-new-points">
+                  <span><Check/> One source of truth</span><span><Check/> Proactive maturity alerts</span><span><Check/> Clear ownership at every step</span>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
-      <section id="features" className="tt-features-section tt-container"><motion.div className="tt-section-heading tt-heading-split" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><div><span className="tt-section-kicker">THE DETAILS, HANDLED</span><h2>Everything in sync.<br/><span>Nothing overlooked.</span></h2></div><p>Thoughtful automation gives teams more time to focus on what matters.</p></motion.div><div className="tt-feature-grid">{features.map(([Icon, title, desc], i) => <motion.article className="tt-feature" key={title} custom={i} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-feature-icon"><Icon size={20}/></span><h3>{title}</h3><p>{desc}</p><span className="tt-feature-arrow"><ArrowUpRight size={16}/></span></motion.article>)}</div></section>
+        <section id="roles" className="tt-roles-section tt-container">
+          <motion.div className="tt-section-heading" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <span className="tt-section-kicker">ONE SHARED WORKFLOW</span>
+            <h2>Built for every side<br/>of the <span>process.</span></h2>
+            <p>Each team gets the tools and visibility it needs to move deposits forward.</p>
+          </motion.div>
+          <div className="tt-role-grid">
+            {roles.map((role, i) => (
+              <motion.article
+                key={role.title}
+                className={`tt-role-card ${role.color} relative`}
+                custom={i}
+                variants={rise}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                whileHover={{ y: -8, rotateX: 2 }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="tt-role-icon"><role.icon size={22}/></div>
+                  <span className="tt-role-eyebrow">{role.eyebrow}</span>
+                </div>
+                <h3>{role.title}</h3>
+                <p>{role.text}</p>
+                <div className="tt-role-divider"/>
+                {role.items.map((item) => (
+                  <span className="tt-role-item" key={item}><Check size={15}/>{item}</span>
+                ))}
+                <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between">
+                  {currentUser?.role === role.id ? (
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <CircleCheck size={12} /> Your Active Role
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 font-medium">Dedicated Workspace</span>
+                  )}
+                  <button
+                    onClick={() => handleManualDivert(role.path)}
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#318de0] hover:text-[#1d6cb5] transition cursor-pointer"
+                  >
+                    {currentUser?.role === role.id ? 'Open Portal' : 'Explore'} <ArrowRight size={13} />
+                  </button>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        </section>
 
-      <section className="tt-dashboard-section"><div className="tt-container tt-dash-layout"><motion.div className="tt-dash-copy" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-section-kicker">VISIBILITY THAT MOVES YOU FORWARD</span><h2>See the whole<br/>picture. <span>Act in time.</span></h2><p>Keep maturity dates, verification progress and secured funds in view — so the next action is always clear.</p><div className="tt-check-list"><span><Check/> Portfolio-wide fund visibility</span><span><Check/> Upcoming maturity timeline</span><span><Check/> Exceptions surfaced early</span></div><Link to="/register" className="tt-text-link">Explore the platform <ArrowRight size={16}/></Link></motion.div><motion.div className="tt-dashboard-stage" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><DashboardMock/></motion.div></div></section>
+        <section id="workflow" className="tt-workflow-section">
+          <div className="tt-container">
+            <motion.div className="tt-section-heading" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <span className="tt-section-kicker">A BETTER WAY TO MOVE</span>
+              <h2>One deposit.<br/><span>Every step accounted for.</span></h2>
+              <p>From the first upload to the final refund, progress stays visible to everyone involved.</p>
+            </motion.div>
+            <div className="tt-lifecycle">
+              <div className="tt-life-path"/><div className="tt-life-progress"/>
+              <div className="tt-life-steps">
+                {steps.map((step, i) => (
+                  <motion.div key={step} className={`tt-life-step ${i < 3 ? 'complete' : ''}`} custom={i} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                    <span className="tt-life-node">{i < 3 ? <Check size={17}/> : <span>0{i + 1}</span>}</span>
+                    <span className="tt-life-caption">{step}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+            <div className="tt-lifecycle-caption">
+              <span><i/> Clear status, shared by every team</span>
+              <span>Secure record at every step <LockKeyhole size={14}/></span>
+            </div>
+          </div>
+        </section>
 
-      <section className="tt-security-section"><div className="tt-container tt-security-card"><div className="tt-security-orb"><div className="tt-security-ring ring-outer"/><div className="tt-security-ring ring-inner"/><div className="tt-security-shield"><ShieldCheck size={45}/></div><span className="tt-orbit-dot"/></div><div className="tt-security-copy"><span className="tt-section-kicker">TRUST IS BUILT IN</span><h2>Every record.<br/><span>In safe hands.</span></h2><p>Purpose-built controls keep sensitive deposit information protected and every action accountable.</p><div className="tt-security-tags"><span><LockKeyhole/> Encrypted records</span><span><Fingerprint/> Role-based access</span><span><FileCheck2/> Auditable actions</span></div></div></div></section>
+        <section id="features" className="tt-features-section tt-container">
+          <motion.div className="tt-section-heading tt-heading-split" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <div>
+              <span className="tt-section-kicker">THE DETAILS, HANDLED</span>
+              <h2>Everything in sync.<br/><span>Nothing overlooked.</span></h2>
+            </div>
+            <p>Thoughtful automation gives teams more time to focus on what matters.</p>
+          </motion.div>
+          <div className="tt-feature-grid">
+            {features.map(([Icon, title, desc], i) => (
+              <motion.article className="tt-feature" key={title} custom={i} variants={rise} initial="hidden" whileInView="show" viewport={{ once: true }}>
+                <span className="tt-feature-icon"><Icon size={20}/></span>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+                <span className="tt-feature-arrow"><ArrowUpRight size={16}/></span>
+              </motion.article>
+            ))}
+          </div>
+        </section>
 
-      <section className="tt-faq-section tt-container" id="faq"><motion.div className="tt-faq-intro" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}><span className="tt-section-kicker">GOOD TO KNOW</span><h2>Questions, answered.</h2><p>A few details about making deposit management simpler.</p><a href="mailto:hello@tracktitans.in" className="tt-text-link">Talk to our team <ArrowRight size={16}/></a></motion.div><div className="tt-faq-list">{faqs.map(([q, a], i) => <div className={`tt-faq-item ${openFaq === i ? 'open' : ''}`} key={q}><button onClick={() => setOpenFaq(openFaq === i ? -1 : i)} aria-expanded={openFaq === i}><span>{q}</span><ChevronDown size={18}/></button><div className="tt-faq-answer"><p>{a}</p></div></div>)}</div></section>
+        <section className="tt-dashboard-section">
+          <div className="tt-container tt-dash-layout">
+            <motion.div className="tt-dash-copy" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <span className="tt-section-kicker">VISIBILITY THAT MOVES YOU FORWARD</span>
+              <h2>See the whole<br/>picture. <span>Act in time.</span></h2>
+              <p>Keep maturity dates, verification progress and secured funds in view — so the next action is always clear.</p>
+              <div className="tt-check-list">
+                <span><Check/> Portfolio-wide fund visibility</span>
+                <span><Check/> Upcoming maturity timeline</span>
+                <span><Check/> Exceptions surfaced early</span>
+              </div>
+              {currentUser ? (
+                <button onClick={() => handleManualDivert()} className="tt-text-link cursor-pointer">
+                  Enter your dashboard <ArrowRight size={16} />
+                </button>
+              ) : (
+                <Link to="/register" className="tt-text-link">Explore the platform <ArrowRight size={16}/></Link>
+              )}
+            </motion.div>
+            <motion.div className="tt-dashboard-stage" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+              <DashboardMock/>
+            </motion.div>
+          </div>
+        </section>
 
-      <section className="tt-cta-section tt-container"><div className="tt-cta-card"><div className="tt-cta-decoration"><div/><div/><div/></div><div className="tt-cta-copy"><span className="tt-section-kicker">A CLEARER WAY STARTS HERE</span><h2>Make every deposit<br/>one less thing to worry about.</h2><p>Bring your FDR lifecycle into focus with TrackTitans.</p><Link to="/register" className="tt-button">Request a demo <ArrowRight size={17}/></Link></div><div className="tt-cta-mark"><ShieldCheck size={74}/><span><i/><i/><i/></span></div></div></section>
-    </main>
+        <section className="tt-security-section">
+          <div className="tt-container tt-security-card">
+            <div className="tt-security-orb">
+              <div className="tt-security-ring ring-outer"/><div className="tt-security-ring ring-inner"/>
+              <div className="tt-security-shield"><ShieldCheck size={45}/></div>
+              <span className="tt-orbit-dot"/>
+            </div>
+            <div className="tt-security-copy">
+              <span className="tt-section-kicker">TRUST IS BUILT IN</span>
+              <h2>Every record.<br/><span>In safe hands.</span></h2>
+              <p>Purpose-built controls keep sensitive deposit information protected and every action accountable.</p>
+              <div className="tt-security-tags">
+                <span><LockKeyhole/> Encrypted records</span>
+                <span><Fingerprint/> Role-based access</span>
+                <span><FileCheck2/> Auditable actions</span>
+              </div>
+            </div>
+          </div>
+        </section>
 
-    <footer className="tt-footer"><div className="tt-container"><div className="tt-footer-top"><div className="tt-footer-brand"><Brand/><p>Every deposit, accounted for.<br/>Built for the education ecosystem.</p></div><div className="tt-footer-links"><div><b>EXPLORE</b><a href="#features">Features</a><a href="#workflow">How it works</a><a href="#roles">For institutions</a></div><div><b>GET STARTED</b><Link to="/login">Log in</Link><Link to="/register">Request a demo</Link><a href="#faq">FAQs</a></div></div></div><div className="tt-footer-bottom"><span>© 2025 TrackTitans <i/> Built for Smart India Hackathon</span><span>Designed for trust. Built for clarity.</span></div></div></footer>
-  </div>;
+        <section className="tt-faq-section tt-container" id="faq">
+          <motion.div className="tt-faq-intro" variants={reveal} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <span className="tt-section-kicker">GOOD TO KNOW</span>
+            <h2>Questions, answered.</h2>
+            <p>A few details about making deposit management simpler.</p>
+            <a href="mailto:hello@tracktitans.in" className="tt-text-link">Talk to our team <ArrowRight size={16}/></a>
+          </motion.div>
+          <div className="tt-faq-list">
+            {faqs.map(([q, a], i) => (
+              <div className={`tt-faq-item ${openFaq === i ? 'open' : ''}`} key={q}>
+                <button onClick={() => setOpenFaq(openFaq === i ? -1 : i)} aria-expanded={openFaq === i}>
+                  <span>{q}</span>
+                  <ChevronDown size={18}/>
+                </button>
+                <div className="tt-faq-answer"><p>{a}</p></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="tt-cta-section tt-container">
+          <div className="tt-cta-card">
+            <div className="tt-cta-decoration"><div/><div/><div/></div>
+            <div className="tt-cta-copy">
+              <span className="tt-section-kicker">A CLEARER WAY STARTS HERE</span>
+              <h2>Make every deposit<br/>one less thing to worry about.</h2>
+              <p>Bring your FDR lifecycle into focus with TrackTitans.</p>
+              {currentUser ? (
+                <button onClick={() => handleManualDivert()} className="tt-button cursor-pointer">
+                  Enter {getRoleLabel(currentUser.role)} <ArrowRight size={17} />
+                </button>
+              ) : (
+                <Link to="/register" className="tt-button">Get started <ArrowRight size={17}/></Link>
+              )}
+            </div>
+            <div className="tt-cta-mark"><ShieldCheck size={74}/><span><i/><i/><i/></span></div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="tt-footer">
+        <div className="tt-container">
+          <div className="tt-footer-top">
+            <div className="tt-footer-brand">
+              <Brand/>
+              <p>Every deposit, accounted for.<br/>Built for the education ecosystem.</p>
+            </div>
+            <div className="tt-footer-links">
+              <div>
+                <b>EXPLORE</b>
+                <a href="#features">Features</a>
+                <a href="#workflow">How it works</a>
+                <a href="#roles">For institutions</a>
+              </div>
+              <div>
+                <b>GET STARTED</b>
+                {currentUser ? (
+                  <>
+                    <button onClick={() => handleManualDivert()} className="text-left text-slate-500 hover:text-blue-500 text-[9px] cursor-pointer">
+                      Dashboard
+                    </button>
+                    <button onClick={handleLogout} className="text-left text-slate-500 hover:text-red-500 text-[9px] cursor-pointer">
+                      Log out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login">Log in</Link>
+                    <Link to="/register">Register</Link>
+                  </>
+                )}
+                <a href="#faq">FAQs</a>
+              </div>
+            </div>
+          </div>
+          <div className="tt-footer-bottom">
+            <span>© 2025 TrackTitans <i/> Built for Smart India Hackathon</span>
+            <span>Designed for trust. Built for clarity.</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
 }

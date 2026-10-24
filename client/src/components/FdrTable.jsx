@@ -54,28 +54,28 @@ export function FdrTable({
 
     if (days < 0) {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#B91C1C] font-mono tabular-nums">
-          <Clock className="w-3 h-3 text-[#B91C1C]" /> Matured ({Math.abs(days)}d ago)
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-lg font-mono tabular-nums">
+          <Clock className="w-3.5 h-3.5 text-rose-600" /> Matured ({Math.abs(days)}d ago)
         </span>
       );
     }
     if (days <= 7) {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#B91C1C] bg-[#FEF2F2] border border-[#FECACA] px-1.5 py-0.5 rounded font-mono tabular-nums">
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-lg font-mono tabular-nums">
           In {days} days (Critical)
         </span>
       );
     }
     if (days <= 15) {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#B45309] bg-[#FFFBEB] border border-[#FDE68A] px-1.5 py-0.5 rounded font-mono tabular-nums">
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg font-mono tabular-nums">
           In {days} days (Urgent)
         </span>
       );
     }
     if (days <= 30) {
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#B45309] font-mono tabular-nums">
+        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-800 bg-amber-50/70 border border-amber-200 px-2 py-0.5 rounded-lg font-mono tabular-nums">
           In {days} days
         </span>
       );
@@ -83,13 +83,13 @@ export function FdrTable({
     if (days > 365) {
       const years = (days / 365.25).toFixed(1);
       return (
-        <span className="inline-flex items-center gap-1 text-[11px] text-[#6B7280] font-mono tabular-nums">
+        <span className="inline-flex items-center gap-1 text-xs text-slate-500 font-mono tabular-nums">
           {years} yrs left
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 text-[11px] text-[#4B5563] font-mono tabular-nums">
+      <span className="inline-flex items-center gap-1 text-xs text-slate-600 font-mono tabular-nums">
         {days} days left
       </span>
     );
@@ -97,10 +97,10 @@ export function FdrTable({
 
   if (!fdrs || fdrs.length === 0) {
     return (
-      <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-12 text-center text-[#6B7280]">
-        <FileText className="w-10 h-10 mx-auto mb-3 text-[#9CA3AF]" />
-        <h4 className="font-semibold text-[#111827] text-sm mb-1">No FDR Records Found</h4>
-        <p className="text-xs text-[#6B7280] max-w-sm mx-auto">
+      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500 shadow-xs">
+        <FileText className="w-12 h-12 mx-auto mb-3 text-slate-400" />
+        <h4 className="font-bold text-slate-900 text-base mb-1">No FDR Records Found</h4>
+        <p className="text-sm text-slate-500 max-w-sm mx-auto">
           No records match the active criteria. Adjust search filter or register a new FDR.
         </p>
       </div>
@@ -108,108 +108,108 @@ export function FdrTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] shadow-xs">
-      <table className="w-full text-left border-collapse text-xs">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
+      <table className="w-full text-left border-collapse text-sm">
         <thead>
-          <tr className="border-b border-[#E5E7EB] bg-[#F7F8FA] font-semibold text-[#4B5563]">
-            <th className="py-3 px-4">FDR Number</th>
-            <th className="py-3 px-4">Institution</th>
-            <th className="py-3 px-4">Bank & Branch</th>
-            <th className="py-3 px-4 text-right">Deposit Amount</th>
-            <th className="py-3 px-4">Maturity Countdown</th>
-            <th className="py-3 px-4 text-center">Lien Marked</th>
-            <th className="py-3 px-4">Compliance Status</th>
-            <th className="py-3 px-4 text-right">Actions</th>
+          <tr className="border-b border-slate-200 bg-slate-50/90 font-bold text-xs uppercase tracking-wider text-slate-600">
+            <th className="py-3.5 px-4">FDR Number</th>
+            <th className="py-3.5 px-4">Institution</th>
+            <th className="py-3.5 px-4">Bank & Branch</th>
+            <th className="py-3.5 px-4 text-right">Deposit Amount</th>
+            <th className="py-3.5 px-4">Maturity Countdown</th>
+            <th className="py-3.5 px-4 text-center">Lien Marked</th>
+            <th className="py-3.5 px-4">Compliance Status</th>
+            <th className="py-3.5 px-4 text-right">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#F3F4F6]">
+        <tbody className="divide-y divide-slate-100">
           {fdrs.map((fdr) => (
             <tr
               key={fdr.id}
-              className="hover:bg-[#F7F8FA] transition-colors"
+              className="hover:bg-slate-50/70 transition-colors"
             >
-              <td className="py-3 px-4 whitespace-nowrap">
+              <td className="py-3.5 px-4 whitespace-nowrap">
                 <Link
                   to={`/fdrs/${fdr.id}`}
-                  className="font-mono font-medium text-[#111827] hover:underline hover:text-[#1F2937] block"
+                  className="font-mono font-semibold text-slate-900 hover:text-blue-600 hover:underline block text-sm"
                 >
                   {fdr.fdr_number}
                 </Link>
-                <span className="text-[11px] text-[#6B7280] font-sans">
+                <span className="text-xs text-slate-500 font-sans">
                   Issued: {fdr.issue_date}
                 </span>
               </td>
 
-              <td className="py-3 px-4">
-                <div className="font-medium text-[#111827] line-clamp-1">
+              <td className="py-3.5 px-4">
+                <div className="font-semibold text-slate-900 line-clamp-1 text-sm">
                   {fdr.institution_name}
                 </div>
-                <div className="text-[11px] text-[#6B7280] font-mono">
+                <div className="text-xs text-slate-500 font-mono">
                   {fdr.aicte_application_id || 'AICTE Application'}
                 </div>
               </td>
 
-              <td className="py-3 px-4">
-                <div className="text-[#111827] font-medium line-clamp-1">
+              <td className="py-3.5 px-4">
+                <div className="text-slate-900 font-semibold line-clamp-1 text-sm">
                   {fdr.bank_name || 'Unassigned'}
                 </div>
-                <div className="text-[11px] text-[#6B7280] line-clamp-1">
+                <div className="text-xs text-slate-500 line-clamp-1">
                   {fdr.branch_name || fdr.ifsc_code || 'Main Branch'}
                 </div>
               </td>
 
-              <td className="py-3 px-4 text-right font-semibold text-[#111827] whitespace-nowrap font-mono tabular-nums">
+              <td className="py-3.5 px-4 text-right font-bold text-slate-900 whitespace-nowrap font-mono tabular-nums text-sm">
                 {formatCurrency(fdr.deposit_amount)}
               </td>
 
-              <td className="py-3 px-4 whitespace-nowrap">
-                <div className="text-[11px] text-[#6B7280] mb-0.5 font-mono tabular-nums">
+              <td className="py-3.5 px-4 whitespace-nowrap">
+                <div className="text-xs text-slate-500 mb-0.5 font-mono tabular-nums">
                   {fdr.maturity_date}
                 </div>
                 {getMaturityCountdownBadge(fdr)}
               </td>
 
-              <td className="py-3 px-4 text-center whitespace-nowrap">
+              <td className="py-3.5 px-4 text-center whitespace-nowrap">
                 {fdr.lien_marked ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] px-2 py-0.5 rounded">
-                    <ShieldCheck className="w-3.5 h-3.5" /> Marked
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Marked
                   </span>
                 ) : (
-                  <span className="text-[11px] text-[#9CA3AF]">
+                  <span className="text-xs text-slate-400 font-medium">
                     Not Marked
                   </span>
                 )}
               </td>
 
-              <td className="py-3 px-4 whitespace-nowrap">
+              <td className="py-3.5 px-4 whitespace-nowrap">
                 <StatusBadge status={fdr.status} />
               </td>
 
-              <td className="py-3 px-4 text-right whitespace-nowrap">
-                <div className="flex items-center justify-end gap-1.5">
+              <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                <div className="flex items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={(e) => handleDownload(e, fdr)}
                     disabled={downloadingId === fdr.id}
-                    className="p-1.5 rounded border border-[#E5E7EB] bg-white hover:bg-gray-50 text-[#4B5563] hover:text-[#111827] transition-colors"
+                    className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
                     title="Download FDR Certificate (PDF / Image)"
                   >
-                    <Download className={`w-3.5 h-3.5 ${downloadingId === fdr.id ? 'animate-bounce' : ''}`} />
+                    <Download className={`w-4 h-4 ${downloadingId === fdr.id ? 'animate-bounce' : ''}`} />
                   </button>
 
                   <Link
                     to={`/fdrs/${fdr.id}`}
-                    className="p-1.5 rounded border border-[#E5E7EB] bg-white hover:bg-gray-50 text-[#4B5563] hover:text-[#111827] transition-colors"
+                    className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
                     title="View Lifecycle Audit Trail"
                   >
-                    <ExternalLink className="w-3.5 h-3.5" />
+                    <ExternalLink className="w-4 h-4" />
                   </Link>
 
                   {onActionClick && (
                     <button
                       type="button"
                       onClick={() => onActionClick(fdr)}
-                      className="px-2.5 py-1 text-xs font-medium rounded bg-[#1F2937] hover:bg-[#111827] text-white transition-colors"
+                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs cursor-pointer"
                     >
                       {actionButtonLabel || 'Action'}
                     </button>

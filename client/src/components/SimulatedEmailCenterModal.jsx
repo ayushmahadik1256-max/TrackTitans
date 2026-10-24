@@ -76,54 +76,54 @@ export function SimulatedEmailCenterModal({
   const getUrgencyBadge = (urgency) => {
     if (urgency === 'critical') {
       return (
-        <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA] flex items-center gap-1 font-mono">
-          <ShieldAlert className="w-3 h-3" /> Critical (≤ 7d)
+        <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1 font-mono">
+          <ShieldAlert className="w-3.5 h-3.5 text-rose-600" /> Critical (≤ 7d)
         </span>
       );
     }
     if (urgency === 'urgent') {
       return (
-        <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#FFFBEB] text-[#B45309] border border-[#FDE68A] flex items-center gap-1 font-mono">
-          <Clock className="w-3 h-3" /> Urgent (≤ 15d)
+        <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1 font-mono">
+          <Clock className="w-3.5 h-3.5 text-amber-600" /> Urgent (≤ 15d)
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-[#F7F8FA] text-[#475569] border border-[#E5E7EB] flex items-center gap-1 font-mono">
-        <Clock className="w-3 h-3" /> Notice (≤ 30d)
+      <span className="px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 flex items-center gap-1 font-mono">
+        <Clock className="w-3.5 h-3.5 text-slate-500" /> Notice (≤ 30d)
       </span>
     );
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-xs">
-      <div className="relative w-full max-w-5xl bg-white border border-[#E5E7EB] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-xs">
+      <div className="relative w-full max-w-5xl bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Top Bar */}
-        <div className="p-4 sm:px-6 border-b border-[#E5E7EB] bg-[#F7F8FA] flex items-center justify-between gap-4">
+        <div className="p-4 sm:px-6 border-b border-slate-200 bg-slate-50/90 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#1F2937] flex items-center justify-center text-white shrink-0">
-              <Mail className="w-4 h-4 text-white" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center text-white shrink-0 shadow-xs">
+              <Mail className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-[#111827] tracking-tight">
+                <h3 className="text-base font-bold text-slate-900 tracking-tight">
                   Nodemailer Simulated Outbox & Delivery Center
                 </h3>
-                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0]">
+                <span className="px-2 py-0.5 rounded text-xs font-mono font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                   SMTP Active
                 </span>
               </div>
-              <p className="text-xs text-[#6B7280]">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Dispatches regulatory compliance notices for FDRs maturing within 30, 15, and 7 days
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             <button
               onClick={handleTriggerAll}
               disabled={triggering}
-              className="px-3.5 py-1.5 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white text-xs font-medium flex items-center gap-1.5 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
             >
               <Send className={`w-3.5 h-3.5 ${triggering ? 'animate-spin' : ''}`} />
               <span>{triggering ? 'Dispatching...' : 'Trigger 30-Day Alert Check'}</span>
@@ -131,7 +131,7 @@ export function SimulatedEmailCenterModal({
 
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-[#6B7280] hover:text-[#111827] hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
               title="Close"
             >
               <X className="w-5 h-5" />

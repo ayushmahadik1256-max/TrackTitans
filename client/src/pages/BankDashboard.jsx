@@ -77,29 +77,29 @@ export function BankDashboard() {
   const pendingCount = fdrs.filter(f => f.status === 'submitted' || f.status === 'under_bank_verification').length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-slate-50/40">
       {/* Header Banner */}
-      <div className="rounded-2xl bg-[#F7F8FA] border border-[#E5E7EB] p-6 sm:p-8">
+      <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4B5563] mb-2">
-              <Landmark className="w-4 h-4 text-[#64748B]" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+              <Landmark className="w-4 h-4 text-emerald-600" />
               <span>Commercial Bank Branch Verification Portal</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
-              {currentUser?.bank_name || 'State Bank of India'}
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              {currentUser?.bank_name || 'Commercial Bank Portal'}
             </h1>
-            <p className="text-xs text-[#6B7280] mt-1">
-              Branch: {currentUser?.branch_name || 'Main Treasury Branch'} · IFSC: <span className="font-mono">{currentUser?.ifsc_code || 'SBIN0000691'}</span>
+            <p className="text-sm text-slate-500 mt-1">
+              Branch: {currentUser?.branch_name || 'Designated Branch'} · IFSC: <span className="font-mono font-semibold">{currentUser?.ifsc_code || 'N/A'}</span>
             </p>
           </div>
 
-          <div className="bg-white border border-[#E5E7EB] rounded-xl p-4 text-center min-w-[200px] shadow-xs">
-            <span className="text-xs text-[#6B7280]">Verification Queue</span>
-            <div className="text-3xl font-bold text-[#111827] mt-0.5 font-mono tabular-nums">
+          <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-4 text-center min-w-[210px] shadow-2xs">
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-800">Verification Queue</span>
+            <div className="text-3xl font-extrabold text-emerald-700 mt-0.5 font-mono tabular-nums">
               {pendingCount}
             </div>
-            <span className="text-[11px] text-[#6B7280]">FDRs awaiting review</span>
+            <span className="text-xs font-medium text-emerald-600">FDRs awaiting review</span>
           </div>
         </div>
       </div>
@@ -107,15 +107,15 @@ export function BankDashboard() {
       {/* Filter Tabs & Search */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 bg-[#F7F8FA] p-1 rounded-lg border border-[#E5E7EB]">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
             {filterTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setFilters({ ...filters, status: tab.id })}
-                className={`px-3 py-1.5 rounded text-xs font-medium whitespace-nowrap transition-colors ${
+                className={`px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeTab === tab.id
-                    ? 'bg-white text-[#111827] shadow-xs border border-[#E5E7EB]'
-                    : 'text-[#6B7280] hover:text-[#111827]'
+                    ? 'bg-white text-emerald-800 shadow-xs border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {tab.label}
@@ -123,14 +123,14 @@ export function BankDashboard() {
             ))}
           </div>
 
-          <div className="relative min-w-[260px]">
-            <Search className="w-3.5 h-3.5 text-[#9CA3AF] absolute left-3 top-3" />
+          <div className="relative min-w-[280px]">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
             <input
               type="text"
               placeholder="Search FDR number or college..."
               value={filters.search || ''}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3.5 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+              className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 shadow-2xs"
             />
           </div>
         </div>

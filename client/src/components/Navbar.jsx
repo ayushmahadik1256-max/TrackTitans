@@ -15,64 +15,70 @@ import {
 } from 'lucide-react';
 
 export function Navbar() {
-  const { currentUser, logout, loginAsDemoRole } = useAuth();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const isActive = (path) => location.pathname === path;
 
-  if (!currentUser && location.pathname === '/landing') return null;
+  if (location.pathname === '/' || location.pathname === '/landing') return null;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-[#E5E7EB] bg-[#FFFFFF] shadow-xs">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 gap-8">
-          {/* Zone 1: Brand Wordmark (Single element, no descriptor chips) */}
-          <div className="flex items-center gap-6 shrink-0">
-            <Link to="/" className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-[#1F2937] flex items-center justify-center text-white">
+        <div className="flex items-center justify-between h-18 gap-8">
+          {/* Zone 1: Brand & Logo */}
+          <div className="flex items-center gap-8 shrink-0">
+            <Link to="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center text-white shadow-xs group-hover:scale-105 transition-transform">
                 <Shield className="w-5 h-5 text-white" />
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="font-bold text-lg tracking-tight text-[#111827] whitespace-nowrap">
-                  TrackTitans
-                </span>
-                <span className="text-[11px] font-mono text-[#6B7280] hidden sm:inline">
-                  SIH26265
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-extrabold text-lg tracking-tight text-slate-900">
+                    TrackTitans
+                  </span>
+                  <span className="text-[11px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                    AICTE SIH26265
+                  </span>
+                </div>
+                <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+                  Three-Party Institutional FDR Escrow Registry
                 </span>
               </div>
             </Link>
 
-            {/* Zone 2: Navigation Links (Clean single-line text links) */}
+            {/* Zone 2: Role-based Navigation Tabs */}
             {currentUser && (
-              <nav className="hidden md:flex items-center gap-1 pl-6 border-l border-[#E5E7EB]">
+              <nav className="hidden md:flex items-center gap-1.5 ml-4">
                 {currentUser.role === 'institution' && (
                   <>
                     <Link
                       to="/institution"
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md whitespace-nowrap transition-colors ${
+                      className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
                         isActive('/institution')
-                          ? 'bg-[#F7F8FA] text-[#111827] font-semibold border border-[#E5E7EB]'
-                          : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                          ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }`}
                     >
-                      Institution Dashboard
+                      <Building2 className="w-4 h-4 text-slate-500" />
+                      College Dashboard
                     </Link>
                     <Link
                       to="/upload-fdr"
-                      className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-1.5 whitespace-nowrap transition-colors ${
+                      className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
                         isActive('/upload-fdr')
-                          ? 'bg-[#F7F8FA] text-[#111827] font-semibold border border-[#E5E7EB]'
-                          : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                          ? 'bg-blue-50 text-blue-700 font-semibold border border-blue-200'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }`}
                     >
-                      <Upload className="w-3.5 h-3.5 text-[#64748B]" />
+                      <Upload className="w-4 h-4 text-slate-500" />
                       Register FDR
                     </Link>
                   </>
@@ -81,27 +87,27 @@ export function Navbar() {
                 {currentUser.role === 'bank' && (
                   <Link
                     to="/bank"
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-1.5 whitespace-nowrap transition-colors ${
+                    className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
                       isActive('/bank')
-                        ? 'bg-[#F7F8FA] text-[#111827] font-semibold border border-[#E5E7EB]'
-                        : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                        ? 'bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    <Landmark className="w-3.5 h-3.5 text-[#64748B]" />
-                    Bank Verification Queue
+                    <Landmark className="w-4 h-4 text-slate-500" />
+                    Branch Verification Queue
                   </Link>
                 )}
 
                 {currentUser.role === 'aicte_admin' && (
                   <Link
                     to="/admin"
-                    className={`px-3 py-1.5 text-xs font-medium rounded-md flex items-center gap-1.5 whitespace-nowrap transition-colors ${
+                    className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-colors flex items-center gap-2 ${
                       isActive('/admin')
-                        ? 'bg-[#F7F8FA] text-[#111827] font-semibold border border-[#E5E7EB]'
-                        : 'text-[#4B5563] hover:text-[#111827] hover:bg-[#F7F8FA]'
+                        ? 'bg-purple-50 text-purple-800 font-semibold border border-purple-200'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    <BarChart3 className="w-3.5 h-3.5 text-[#64748B]" />
+                    <BarChart3 className="w-4 h-4 text-slate-500" />
                     AICTE Executive Dashboard
                   </Link>
                 )}
@@ -109,61 +115,12 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Zone 3: Demo Switcher + Actions */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Quick Demo Role Switcher Segmented Control */}
-            <div className="hidden lg:flex items-center gap-1 bg-[#F7F8FA] p-1 rounded-lg border border-[#E5E7EB]">
-              <span className="text-[11px] font-medium text-[#6B7280] px-1.5">
-                Role:
-              </span>
-              <button
-                type="button"
-                onClick={() => {
-                  loginAsDemoRole('institution');
-                  navigate('/institution');
-                }}
-                className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-                  currentUser?.role === 'institution'
-                    ? 'bg-[#FFFFFF] text-[#111827] shadow-xs border border-[#E5E7EB]'
-                    : 'text-[#4B5563] hover:text-[#111827]'
-                }`}
-              >
-                Institution
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  loginAsDemoRole('bank');
-                  navigate('/bank');
-                }}
-                className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-                  currentUser?.role === 'bank'
-                    ? 'bg-[#FFFFFF] text-[#111827] shadow-xs border border-[#E5E7EB]'
-                    : 'text-[#4B5563] hover:text-[#111827]'
-                }`}
-              >
-                Bank
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  loginAsDemoRole('aicte_admin');
-                  navigate('/admin');
-                }}
-                className={`px-2.5 py-1 rounded text-[11px] font-medium transition-colors ${
-                  currentUser?.role === 'aicte_admin'
-                    ? 'bg-[#FFFFFF] text-[#111827] shadow-xs border border-[#E5E7EB]'
-                    : 'text-[#4B5563] hover:text-[#111827]'
-                }`}
-              >
-                AICTE Admin
-              </button>
-            </div>
-
+          {/* Zone 3: User Profile & Actions */}
+          <div className="flex items-center gap-3.5 shrink-0">
             {currentUser ? (
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 <div className="text-right hidden sm:block">
-                  <div className="text-xs font-semibold text-[#111827] max-w-[160px] truncate">
+                  <div className="text-sm font-semibold text-slate-900 max-w-[170px] truncate">
                     {currentUser.full_name || currentUser.email}
                   </div>
                   <div className="flex items-center justify-end mt-0.5">
@@ -174,7 +131,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsEmailModalOpen(true)}
-                  className="p-2 rounded-lg bg-[#F7F8FA] hover:bg-[#F3F4F6] text-[#4B5563] hover:text-[#111827] border border-[#E5E7EB] transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
                   title="Open Nodemailer Email Notification Outbox"
                 >
                   <Mail className="w-4 h-4" />
@@ -183,23 +140,23 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="p-2 rounded-lg bg-[#F7F8FA] hover:bg-[#FEF2F2] text-[#4B5563] hover:text-[#B91C1C] border border-[#E5E7EB] transition-colors"
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 transition-colors cursor-pointer"
                   title="Sign out of TrackTitans"
                 >
                   <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <Link
                   to="/login"
-                  className="px-3 py-1.5 text-xs font-medium rounded-lg text-[#111827] hover:bg-[#F7F8FA] transition-colors"
+                  className="px-3.5 py-2 text-sm font-semibold rounded-xl text-slate-700 hover:bg-slate-100 transition-colors"
                 >
                   Sign In
                 </Link>
                 <Link
                   to="/register"
-                  className="px-3.5 py-1.5 text-xs font-medium rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white transition-colors"
+                  className="px-4 py-2 text-sm font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs"
                 >
                   Register
                 </Link>

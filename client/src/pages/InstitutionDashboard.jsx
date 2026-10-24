@@ -90,46 +90,46 @@ export function InstitutionDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-white">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8 bg-slate-50/40">
       {/* Institution Banner */}
-      <div className="rounded-2xl bg-[#F7F8FA] border border-[#E5E7EB] p-6 sm:p-8">
+      <div className="rounded-2xl bg-white border border-slate-200 p-6 sm:p-8 shadow-xs">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4B5563] mb-2">
-              <Building2 className="w-4 h-4 text-[#64748B]" />
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+              <Building2 className="w-4 h-4 text-blue-600" />
               <span>Technical Institution Central Portal</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#111827] tracking-tight">
-              {currentUser?.institution_name || 'Delhi Institute of Engineering & Technology'}
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              {currentUser?.institution_name || currentUser?.full_name || 'My Institution'}
             </h1>
-            <p className="text-xs text-[#6B7280] mt-1 font-mono">
-              AICTE Application ID: {currentUser?.aicte_application_id || 'AICTE-1-9321482910'}
+            <p className="text-sm text-slate-500 mt-1 font-mono">
+              AICTE Application ID: {currentUser?.aicte_application_id || 'Not Assigned'}
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => setShow3DVault(!show3DVault)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-gray-50 text-[#111827] border border-[#E5E7EB] font-medium text-xs transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-sm transition-colors shadow-2xs cursor-pointer"
             >
-              <Box className="w-3.5 h-3.5 text-[#64748B]" />
+              <Box className="w-4 h-4 text-slate-500" />
               <span>{show3DVault ? 'Hide 3D Vault' : 'View 3D Vault'}</span>
             </button>
 
             <button
               onClick={() => setIsEmailCenterOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white hover:bg-gray-50 text-[#111827] border border-[#E5E7EB] font-medium text-xs transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold text-sm transition-colors shadow-2xs cursor-pointer"
               title="Open Nodemailer Simulated Outbox"
             >
-              <Mail className="w-3.5 h-3.5 text-[#64748B]" />
+              <Mail className="w-4 h-4 text-slate-500" />
               <span>Nodemailer Email Center</span>
             </button>
 
             <Link
               to="/upload-fdr"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white font-medium text-xs transition-colors shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors shadow-xs cursor-pointer"
             >
-              <Upload className="w-3.5 h-3.5" />
+              <Upload className="w-4 h-4" />
               <span>Register New FDR</span>
             </Link>
           </div>
@@ -176,15 +176,15 @@ export function InstitutionDashboard() {
       <div className="space-y-4 pt-2">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           {/* Status Tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0 bg-[#F7F8FA] p-1 rounded-lg border border-[#E5E7EB]">
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
             {filterTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setFilters({ ...filters, status: tab.id })}
-                className={`px-3 py-1.5 rounded text-xs font-medium whitespace-nowrap transition-colors ${
+                className={`px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   activeStatus === tab.id
-                    ? 'bg-white text-[#111827] shadow-xs border border-[#E5E7EB]'
-                    : 'text-[#6B7280] hover:text-[#111827]'
+                    ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {tab.label}
@@ -193,14 +193,14 @@ export function InstitutionDashboard() {
           </div>
 
           {/* Search box */}
-          <div className="relative min-w-[240px]">
-            <Search className="w-3.5 h-3.5 text-[#9CA3AF] absolute left-3 top-3" />
+          <div className="relative min-w-[280px]">
+            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
             <input
               type="text"
               placeholder="Search FDR number or bank..."
               value={filters.search || ''}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-              className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3.5 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+              className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 shadow-2xs"
             />
           </div>
         </div>

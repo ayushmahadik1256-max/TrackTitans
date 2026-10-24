@@ -76,7 +76,7 @@ export function FdrDetails() {
       <div className="max-w-3xl mx-auto py-12 px-4">
         <ErrorToast message={error || 'FDR record not found'} />
         <Link
-          to="/"
+          to={currentUser?.role === 'bank' ? '/bank' : currentUser?.role === 'aicte_admin' ? '/admin' : '/institution'}
           className="inline-flex items-center gap-2 text-xs font-medium text-[#111827] hover:underline mt-4"
         >
           <ArrowLeft className="w-4 h-4" /> Back to Dashboard
@@ -93,50 +93,50 @@ export function FdrDetails() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 bg-white">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 bg-slate-50/40">
       {/* Back button and quick actions */}
       <div className="flex items-center justify-between gap-4">
         <button
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-[#F7F8FA] text-[#4B5563] border border-[#E5E7EB] text-xs font-medium transition-colors"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-sm font-semibold transition-colors shadow-2xs cursor-pointer"
         >
-          <ArrowLeft className="w-3.5 h-3.5" /> Back
+          <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
         <button
           onClick={handleDownload}
           disabled={downloading}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white text-xs font-medium transition-colors disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
         >
-          <Download className={`w-3.5 h-3.5 ${downloading ? 'animate-bounce' : ''}`} />
+          <Download className={`w-4 h-4 ${downloading ? 'animate-bounce' : ''}`} />
           <span>{downloading ? 'Generating Pre-signed S3 URL...' : 'Download Verified Certificate'}</span>
         </button>
       </div>
 
       {actionSuccess && (
-        <div className="rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] p-4 text-xs text-[#15803D] flex items-center gap-2">
+        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-medium text-emerald-800 flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" /> {actionSuccess}
         </div>
       )}
 
       {/* Main FDR Details Card */}
-      <div className="bg-white border border-[#E5E7EB] rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-[#F3F4F6]">
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
           <div>
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <h1 className="text-2xl sm:text-3xl font-mono font-bold text-[#111827]">
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-2xl sm:text-3xl font-mono font-bold text-slate-900">
                 {fdr.fdr_number}
               </h1>
               <StatusBadge status={fdr.status} />
             </div>
-            <p className="text-xs text-[#6B7280]">
-              Institutional Security Deposit Record ID: <span className="font-mono text-[#111827]">{fdr.id}</span>
+            <p className="text-sm text-slate-500">
+              Institutional Security Deposit Record ID: <span className="font-mono text-slate-900 font-medium">{fdr.id}</span>
             </p>
           </div>
 
           <div className="text-right">
-            <span className="text-xs text-[#6B7280] block">Deposit Principal Amount</span>
-            <span className="text-3xl font-bold text-[#15803D] font-mono tabular-nums">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Deposit Principal Amount</span>
+            <span className="text-3xl font-extrabold text-emerald-700 font-mono tabular-nums">
               {formatCurrency(fdr.deposit_amount)}
             </span>
           </div>
@@ -144,20 +144,20 @@ export function FdrDetails() {
 
         {/* Metadata Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="rounded-xl bg-[#F7F8FA] p-4 border border-[#E5E7EB] space-y-1">
-            <span className="text-[11px] font-semibold text-[#6B7280] flex items-center gap-1.5 uppercase">
-              <Building2 className="w-3.5 h-3.5 text-[#4B5563]" /> Depositing College
+          <div className="rounded-xl bg-slate-50 p-4 border border-slate-200 space-y-1.5">
+            <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5 uppercase tracking-wider">
+              <Building2 className="w-4 h-4 text-blue-600" /> Depositing College
             </span>
-            <div className="text-sm font-semibold text-[#111827] pt-0.5">{fdr.institution_name}</div>
-            <div className="text-xs font-mono text-[#6B7280]">{fdr.aicte_application_id}</div>
-            <div className="text-xs text-[#6B7280]">{fdr.institution_email}</div>
+            <div className="text-sm font-bold text-slate-900 pt-0.5">{fdr.institution_name}</div>
+            <div className="text-xs font-mono text-slate-500">{fdr.aicte_application_id}</div>
+            <div className="text-xs text-slate-500">{fdr.institution_email}</div>
           </div>
 
-          <div className="rounded-xl bg-[#F7F8FA] p-4 border border-[#E5E7EB] space-y-1">
-            <span className="text-[11px] font-semibold text-[#6B7280] flex items-center gap-1.5 uppercase">
-              <Landmark className="w-3.5 h-3.5 text-[#4B5563]" /> Issuing Partner Bank
+          <div className="rounded-xl bg-slate-50 p-4 border border-slate-200 space-y-1.5">
+            <span className="text-xs font-bold text-slate-500 flex items-center gap-1.5 uppercase tracking-wider">
+              <Landmark className="w-4 h-4 text-emerald-600" /> Issuing Partner Bank
             </span>
-            <div className="text-sm font-semibold text-[#111827] pt-0.5">{fdr.bank_name || 'Commercial Bank'}</div>
+            <div className="text-sm font-bold text-slate-900 pt-0.5">{fdr.bank_name || 'Commercial Bank'}</div>
             <div className="text-xs text-[#4B5563]">{fdr.branch_name || 'Main Branch'}</div>
             <div className="text-xs font-mono text-[#6B7280]">IFSC: {fdr.ifsc_code || 'SBIN0000691'}</div>
           </div>

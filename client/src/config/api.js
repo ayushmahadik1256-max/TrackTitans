@@ -14,8 +14,8 @@ export async function getAuthToken() {
     console.warn('Failed to retrieve Firebase ID token:', err);
   }
 
-  // Check localStorage for active session token or demo token
-  return localStorage.getItem('tracktitans_token') || 'demo-token-default';
+  // Check localStorage for active session token
+  return localStorage.getItem('tracktitans_token') || '';
 }
 
 /**

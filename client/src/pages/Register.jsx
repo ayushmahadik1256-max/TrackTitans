@@ -57,10 +57,7 @@ export function Register() {
       };
 
       await register(email, password, role, profileData);
-
-      if (role === 'institution') navigate('/institution');
-      else if (role === 'bank') navigate('/bank');
-      else navigate('/admin');
+      navigate('/?divert=true');
     } catch (err) {
       setErrorMessage(err.message || 'Registration failed.');
     } finally {
@@ -69,16 +66,16 @@ export function Register() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
-      <div className="max-w-xl w-full space-y-6 bg-white border border-[#E5E7EB] p-8 rounded-2xl shadow-xs">
+    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50/60">
+      <div className="max-w-xl w-full space-y-6 bg-white border border-slate-200 p-8 rounded-2xl shadow-sm">
         <div className="text-left">
-          <div className="w-10 h-10 rounded-lg bg-[#1F2937] flex items-center justify-center text-white mb-3">
-            <Shield className="w-5 h-5" />
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center text-white mb-3 shadow-xs">
+            <Shield className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-xl font-bold tracking-tight text-[#111827]">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
             Register TrackTitans Account
           </h2>
-          <p className="text-xs text-[#6B7280] mt-0.5">
+          <p className="text-sm text-slate-500 mt-1">
             Select your organization role to register an institutional FDR vault
           </p>
         </div>
@@ -86,43 +83,43 @@ export function Register() {
         <ErrorToast message={errorMessage} onDismiss={() => setErrorMessage(null)} />
 
         {/* Role Selector Tabs */}
-        <div className="grid grid-cols-3 gap-1.5 bg-[#F7F8FA] p-1 rounded-lg border border-[#E5E7EB]">
+        <div className="grid grid-cols-3 gap-2 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
           <button
             type="button"
             onClick={() => setRole('institution')}
-            className={`py-2 px-3 rounded text-xs font-medium flex items-center justify-center gap-1.5 transition-colors ${
+            className={`py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
               role === 'institution'
-                ? 'bg-white text-[#111827] shadow-xs border border-[#E5E7EB]'
-                : 'text-[#6B7280] hover:text-[#111827]'
+                ? 'bg-white text-blue-700 shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Building2 className="w-3.5 h-3.5 text-[#64748B]" />
+            <Building2 className="w-4 h-4 text-blue-600" />
             <span>Institution</span>
           </button>
 
           <button
             type="button"
             onClick={() => setRole('bank')}
-            className={`py-2 px-3 rounded text-xs font-medium flex items-center justify-center gap-1.5 transition-colors ${
+            className={`py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
               role === 'bank'
-                ? 'bg-white text-[#111827] shadow-xs border border-[#E5E7EB]'
-                : 'text-[#6B7280] hover:text-[#111827]'
+                ? 'bg-white text-emerald-700 shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <Landmark className="w-3.5 h-3.5 text-[#64748B]" />
+            <Landmark className="w-4 h-4 text-emerald-600" />
             <span>Bank Partner</span>
           </button>
 
           <button
             type="button"
             onClick={() => setRole('aicte_admin')}
-            className={`py-2 px-3 rounded text-xs font-medium flex items-center justify-center gap-1.5 transition-colors ${
+            className={`py-2.5 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer ${
               role === 'aicte_admin'
-                ? 'bg-white text-[#111827] shadow-xs border border-[#E5E7EB]'
-                : 'text-[#6B7280] hover:text-[#111827]'
+                ? 'bg-white text-purple-700 shadow-xs border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#64748B]" />
+            <ShieldCheck className="w-4 h-4 text-purple-600" />
             <span>AICTE Admin</span>
           </button>
         </div>
@@ -315,22 +312,22 @@ export function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white font-medium text-xs py-2.5 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+            className="w-full mt-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
           >
             {loading ? (
               <span>Registering Profile...</span>
             ) : (
               <>
                 <span>Complete Registration</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <ArrowRight className="w-4 h-4" />
               </>
             )}
           </button>
         </form>
 
-        <div className="text-center text-xs text-[#6B7280]">
+        <div className="text-center text-sm text-slate-500">
           Already registered?{' '}
-          <Link to="/login" className="text-[#111827] hover:underline font-medium">
+          <Link to="/login" className="text-blue-600 hover:underline font-semibold">
             Sign In here
           </Link>
         </div>

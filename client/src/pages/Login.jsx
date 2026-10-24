@@ -8,9 +8,6 @@ import {
   Lock,
   Mail,
   ArrowRight,
-  Building2,
-  Landmark,
-  ShieldCheck,
 } from 'lucide-react';
 
 export function Login() {
@@ -19,7 +16,7 @@ export function Login() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const { login, loginAsDemoRole } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -29,7 +26,7 @@ export function Login() {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/?divert=true');
     } catch (err) {
       setErrorMessage(err.message || 'Login failed. Please verify credentials.');
     } finally {
@@ -37,142 +34,97 @@ export function Login() {
     }
   };
 
-  const handleDemoLogin = (role) => {
-    loginAsDemoRole(role);
-    if (role === 'institution') navigate('/institution');
-    else if (role === 'bank') navigate('/bank');
-    else if (role === 'aicte_admin') navigate('/admin');
-  };
-
   return (
-    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-white">
+    <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50/60">
       <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Left Column: 3D Tripartite Escrow Vault */}
         <div className="lg:col-span-6 space-y-4 hidden lg:block">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#4B5563] mb-2">
-              <Shield className="w-4 h-4 text-[#1F2937]" />
-              <span>Smart India Hackathon SIH26265</span>
+            <div className="inline-flex items-center gap-2 text-xs font-bold text-blue-700 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+              <Shield className="w-4 h-4 text-blue-600" />
+              <span>Multi-Party Escrow Consensus</span>
             </div>
-            <h1 className="text-3xl font-extrabold text-[#111827] tracking-tight">
-              Institutional FDR & Security Deposit Lifecycle Platform
-            </h1>
-            <p className="text-xs text-[#6B7280] mt-1.5 leading-relaxed">
-              Digitizing tri-party sovereign custody between Technical Institutions, Commercial Banks, and AICTE National Directorate.
+            <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+              Real-time Sovereign Custody Engine
+            </h2>
+            <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+              Cryptographically unified ledger between Technical Institutions, Scheduled Commercial Banks, and AICTE National Regulatory Authority.
             </p>
           </div>
 
-          <EscrowVaultVisual3D
-            title="Tripartite Escrow Custody Token"
-            subtitle="Drag to inspect 3-party verification rings: College · Bank · AICTE"
-            height="260px"
-          />
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+            <EscrowVaultVisual3D
+              title="Tripartite Escrow Architecture"
+              subtitle="Drag to rotate consensus rings • College · Bank · AICTE"
+              height="300px"
+              interactive={true}
+            />
+          </div>
 
-          <div className="grid grid-cols-3 gap-2 pt-2 text-[11px] text-[#6B7280]">
-            <div className="p-2.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB]">
-              <span className="font-semibold text-[#111827] block">Institutions</span>
-              Scanned FDR & Lien
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs">
+              <span className="text-xs font-semibold text-slate-500 block">Institutions</span>
+              <span className="text-sm font-bold text-slate-900">End-to-End Vault</span>
             </div>
-            <div className="p-2.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB]">
-              <span className="font-semibold text-[#111827] block">Partner Banks</span>
-              Ledger Verification
+            <div className="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs">
+              <span className="text-xs font-semibold text-slate-500 block">Bank Branch</span>
+              <span className="text-sm font-bold text-slate-900">Lien Verification</span>
             </div>
-            <div className="p-2.5 rounded-lg bg-[#F7F8FA] border border-[#E5E7EB]">
-              <span className="font-semibold text-[#111827] block">AICTE Admin</span>
-              Release Oversight
+            <div className="p-3 rounded-xl bg-white border border-slate-200 shadow-2xs">
+              <span className="text-xs font-semibold text-slate-500 block">AICTE HQ</span>
+              <span className="text-sm font-bold text-slate-900">Release Sanctions</span>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Sign In Card */}
-        <div className="lg:col-span-6 max-w-md w-full mx-auto space-y-6 bg-white border border-[#E5E7EB] p-8 rounded-2xl shadow-xs">
+        {/* Right Column: Standard Authentication Form */}
+        <div className="lg:col-span-6 bg-white border border-slate-200 p-8 sm:p-10 rounded-2xl shadow-sm space-y-6">
           <div className="text-left">
-            <div className="w-10 h-10 rounded-lg bg-[#1F2937] flex items-center justify-center text-white mb-3">
-              <Shield className="w-5 h-5" />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center text-white mb-3 shadow-xs">
+              <Shield className="w-6 h-6 text-white" />
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-[#111827]">
+            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
               Sign in to TrackTitans
             </h2>
-            <p className="text-xs text-[#6B7280] mt-0.5">
-              Select your role or sign in with registered credentials
+            <p className="text-sm text-slate-500 mt-1">
+              Enter your registered credentials to access your dashboard
             </p>
           </div>
 
           <ErrorToast message={errorMessage} onDismiss={() => setErrorMessage(null)} />
 
-          {/* Demo Fast Login Buttons */}
-          <div className="bg-[#F7F8FA] border border-[#E5E7EB] rounded-xl p-3.5 space-y-2">
-            <span className="text-[11px] font-semibold text-[#4B5563] block">
-              Evaluator Quick Access:
-            </span>
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('institution')}
-                className="flex flex-col items-center justify-center p-2 rounded-lg bg-white hover:bg-gray-50 border border-[#E5E7EB] text-xs font-medium text-[#111827] transition-colors"
-              >
-                <Building2 className="w-4 h-4 text-[#64748B] mb-1" />
-                <span>Institution</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('bank')}
-                className="flex flex-col items-center justify-center p-2 rounded-lg bg-white hover:bg-gray-50 border border-[#E5E7EB] text-xs font-medium text-[#111827] transition-colors"
-              >
-                <Landmark className="w-4 h-4 text-[#64748B] mb-1" />
-                <span>Bank</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('aicte_admin')}
-                className="flex flex-col items-center justify-center p-2 rounded-lg bg-white hover:bg-gray-50 border border-[#E5E7EB] text-xs font-medium text-[#111827] transition-colors"
-              >
-                <ShieldCheck className="w-4 h-4 text-[#64748B] mb-1" />
-                <span>AICTE Admin</span>
-              </button>
-            </div>
-          </div>
-
-          <div className="relative flex items-center justify-center">
-            <div className="border-t border-[#E5E7EB] w-full" />
-            <span className="bg-white px-3 text-[11px] text-[#9CA3AF] uppercase tracking-wider shrink-0 font-medium">
-              or enter credentials
-            </span>
-            <div className="border-t border-[#E5E7EB] w-full" />
-          </div>
-
           {/* Standard Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#111827] mb-1">
-                Official Email
+              <label className="block text-sm font-medium text-slate-800 mb-1.5">
+                Official Email Address
               </label>
               <div className="relative">
-                <Mail className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-2.5" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="registrar@delhitechnical.edu.in"
-                  className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3.5 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                  placeholder="name@institution.edu.in or bank.co.in"
+                  className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#111827] mb-1">
+              <label className="block text-sm font-medium text-slate-800 mb-1.5">
                 Password
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[#9CA3AF] absolute left-3 top-2.5" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3.5 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                  placeholder="••••••••••••"
+                  className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
                 />
               </div>
             </div>
@@ -180,24 +132,29 @@ export function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white font-medium text-xs py-2.5 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
+              className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
             >
               {loading ? (
                 <span>Authenticating...</span>
               ) : (
                 <>
-                  <span>Sign In to Dashboard</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
+                  <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          <div className="text-center text-xs text-[#6B7280]">
-            Need to register an institutional or bank account?{' '}
-            <Link to="/register" className="text-[#111827] hover:underline font-medium">
-              Register here
-            </Link>
+          <div className="text-center pt-2 border-t border-slate-100">
+            <p className="text-sm text-slate-600">
+              Don't have an institutional or banking account?{' '}
+              <Link
+                to="/register"
+                className="font-semibold text-blue-600 hover:text-blue-700 hover:underline"
+              >
+                Register now
+              </Link>
+            </p>
           </div>
         </div>
       </div>

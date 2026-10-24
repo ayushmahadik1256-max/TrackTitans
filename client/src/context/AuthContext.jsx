@@ -10,40 +10,26 @@ import apiClient from '../config/api.js';
 
 const AuthContext = createContext(null);
 
-// Demo profile templates for Hackathon and quick testing
-const DEMO_PROFILES = {
-  institution: {
-    id: 'c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f',
-    uid: 'demo_uid_institution',
-    email: 'registrar@delhitechnical.edu.in',
-    full_name: 'Prof. Sunita Deshmukh',
-    role: 'institution',
-    institution_name: 'Delhi Institute of Engineering & Technology',
-    aicte_application_id: 'AICTE-1-9321482910',
-    phone: '+91-9876543210',
-  },
-  bank: {
-    id: 'b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e',
-    uid: 'demo_uid_bank',
-    email: 'mgr.delhi@sbi.co.in',
-    full_name: 'Rajeev Menon (Branch Manager)',
-    role: 'bank',
-    bank_name: 'State Bank of India',
-    branch_name: 'Parliament Street Branch, New Delhi',
-    ifsc_code: 'SBIN0000691',
-    phone: '+91-11-23374821',
-  },
-  aicte_admin: {
-    id: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
-    uid: 'demo_uid_aicte_admin',
-    email: 'admin@aicte-india.org',
-    full_name: 'Dr. Ramesh Sharma (Deputy Director)',
-    role: 'aicte_admin',
-    institution_name: null,
-    bank_name: null,
-    phone: '+91-11-29581000',
-  },
-};
+const ACCOUNTS_STORAGE_KEY = 'tracktitans_accounts';
+const CURRENT_USER_STORAGE_KEY = 'tracktitans_current_user';
+const TOKEN_STORAGE_KEY = 'tracktitans_token';
+
+function getStoredAccounts() {
+  try {
+    const raw = localStorage.getItem(ACCOUNTS_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredAccounts(accounts) {
+  try {
+    localStorage.setItem(ACCOUNTS_STORAGE_KEY, JSON.stringify(accounts));
+  } catch (err) {
+    console.warn('Failed to save accounts to localStorage:', err);
+  }
+}
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
@@ -54,7 +40,7 @@ export function AuthProvider({ children }) {
   const syncWithBackend = async (firebaseUser, profileOverrides = {}) => {
     try {
       const token = await firebaseUser.getIdToken();
-      localStorage.setItem('tracktitans_token', token);
+      localStorage.setItem(TOKEN_STORAGE_KEY, token);
 
       const response = await apiClient.post('/auth/sync-user', {
         role: profileOverrides.role || 'institution',
@@ -76,14 +62,18 @@ export function AuthProvider({ children }) {
       return userProfile;
     } catch (err) {
       console.warn('Backend sync warning, fallback to local profile:', err);
-      // Fallback in case backend DB is initializing
       const fallbackUser = {
+        id: firebaseUser.uid,
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         full_name: profileOverrides.full_name || firebaseUser.displayName || 'User',
         role: profileOverrides.role || 'institution',
-        institution_name: profileOverrides.institution_name,
-        bank_name: profileOverrides.bank_name,
+        institution_name: profileOverrides.institution_name || null,
+        aicte_application_id: profileOverrides.aicte_application_id || null,
+        bank_name: profileOverrides.bank_name || null,
+        branch_name: profileOverrides.branch_name || null,
+        ifsc_code: profileOverrides.ifsc_code || null,
+        phone: profileOverrides.phone || null,
       };
       setCurrentUser(fallbackUser);
       return fallbackUser;
@@ -91,18 +81,21 @@ export function AuthProvider({ children }) {
   };
 
   useEffect(() => {
-    // Check saved demo user or listen to Firebase
-    const savedDemoRole = localStorage.getItem('tracktitans_demo_role');
-    if (savedDemoRole && DEMO_PROFILES[savedDemoRole]) {
-      setCurrentUser(DEMO_PROFILES[savedDemoRole]);
-      setLoading(false);
-      return;
-    }
+    // Clean up any legacy demo state
+    localStorage.removeItem('tracktitans_demo_role');
 
     if (!isFirebaseConfigured) {
-      // Default to institution demo so app is immediately usable in live demo
-      setCurrentUser(DEMO_PROFILES.institution);
-      localStorage.setItem('tracktitans_token', 'mock-token-institution');
+      // Local authenticated session
+      try {
+        const storedUser = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
+        if (storedUser) {
+          setCurrentUser(JSON.parse(storedUser));
+        } else {
+          setCurrentUser(null);
+        }
+      } catch {
+        setCurrentUser(null);
+      }
       setLoading(false);
       return;
     }
@@ -111,8 +104,7 @@ export function AuthProvider({ children }) {
       if (firebaseUser) {
         try {
           const token = await firebaseUser.getIdToken();
-          localStorage.setItem('tracktitans_token', token);
-          // Fetch current profile from backend
+          localStorage.setItem(TOKEN_STORAGE_KEY, token);
           const meRes = await apiClient.get('/auth/me');
           setCurrentUser({
             ...meRes.data,
@@ -128,7 +120,7 @@ export function AuthProvider({ children }) {
         }
       } else {
         setCurrentUser(null);
-        localStorage.removeItem('tracktitans_token');
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
       }
       setLoading(false);
     });
@@ -140,11 +132,13 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     setError(null);
     setLoading(true);
+    const normalizedEmail = email.trim().toLowerCase();
+
     try {
       if (isFirebaseConfigured) {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
         const token = await userCredential.user.getIdToken();
-        localStorage.setItem('tracktitans_token', token);
+        localStorage.setItem(TOKEN_STORAGE_KEY, token);
         const meRes = await apiClient.get('/auth/me');
         setCurrentUser({
           ...meRes.data,
@@ -152,14 +146,24 @@ export function AuthProvider({ children }) {
           email: userCredential.user.email,
         });
       } else {
-        // Match demo user email if Firebase not configured
-        if (email.includes('admin')) {
-          loginAsDemoRole('aicte_admin');
-        } else if (email.includes('bank') || email.includes('sbi')) {
-          loginAsDemoRole('bank');
-        } else {
-          loginAsDemoRole('institution');
+        // Local account validation
+        const accounts = getStoredAccounts();
+        const found = accounts.find((acc) => acc.email === normalizedEmail);
+
+        if (!found) {
+          throw new Error('Account not found with this email. Please register first.');
         }
+
+        if (found.password && found.password !== password) {
+          throw new Error('Incorrect password. Please verify your credentials.');
+        }
+
+        const authenticatedProfile = { ...found };
+        delete authenticatedProfile.password;
+
+        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(authenticatedProfile));
+        localStorage.setItem(TOKEN_STORAGE_KEY, `session-token-${authenticatedProfile.role}-${Date.now()}`);
+        setCurrentUser(authenticatedProfile);
       }
     } catch (err) {
       setError(err.message);
@@ -173,23 +177,41 @@ export function AuthProvider({ children }) {
   const register = async (email, password, role, profileData) => {
     setError(null);
     setLoading(true);
+    const normalizedEmail = email.trim().toLowerCase();
+
     try {
       if (isFirebaseConfigured) {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
         await syncWithBackend(userCredential.user, { role, ...profileData });
       } else {
-        const customUser = {
-          id: `custom-${Date.now()}`,
+        const accounts = getStoredAccounts();
+        const existing = accounts.find((acc) => acc.email === normalizedEmail);
+        if (existing) {
+          throw new Error('An account with this email address already exists. Please sign in instead.');
+        }
+
+        const newUser = {
+          id: `usr-${Date.now()}`,
           uid: `uid-${Date.now()}`,
-          email,
+          email: normalizedEmail,
           role,
-          full_name: profileData.full_name || 'Registered User',
-          institution_name: profileData.institution_name,
-          bank_name: profileData.bank_name,
-          phone: profileData.phone,
+          full_name: profileData.full_name || normalizedEmail.split('@')[0],
+          institution_name: role === 'institution' ? (profileData.institution_name || 'My Institution') : null,
+          aicte_application_id: role === 'institution' ? (profileData.aicte_application_id || 'AICTE-APP-NEW') : null,
+          bank_name: role === 'bank' ? (profileData.bank_name || 'Commercial Bank') : null,
+          branch_name: role === 'bank' ? (profileData.branch_name || 'Main Branch') : null,
+          ifsc_code: role === 'bank' ? (profileData.ifsc_code || 'BANK0000001') : null,
+          phone: profileData.phone || '',
         };
-        setCurrentUser(customUser);
-        localStorage.setItem('tracktitans_token', `mock-token-${role}`);
+
+        // Save account with password for local verification
+        accounts.push({ ...newUser, password });
+        saveStoredAccounts(accounts);
+
+        // Save current session
+        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(newUser));
+        localStorage.setItem(TOKEN_STORAGE_KEY, `session-token-${role}-${Date.now()}`);
+        setCurrentUser(newUser);
       }
     } catch (err) {
       setError(err.message);
@@ -197,14 +219,6 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Demo Role Switcher for instant evaluator walkthrough
-  const loginAsDemoRole = (role) => {
-    const profile = DEMO_PROFILES[role] || DEMO_PROFILES.institution;
-    localStorage.setItem('tracktitans_demo_role', role);
-    localStorage.setItem('tracktitans_token', `mock-token-${role}`);
-    setCurrentUser(profile);
   };
 
   // Logout
@@ -216,8 +230,9 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.warn('Firebase signout error:', err);
     }
+    localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem('tracktitans_demo_role');
-    localStorage.removeItem('tracktitans_token');
     setCurrentUser(null);
   };
 
@@ -228,7 +243,6 @@ export function AuthProvider({ children }) {
     login,
     register,
     logout,
-    loginAsDemoRole,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

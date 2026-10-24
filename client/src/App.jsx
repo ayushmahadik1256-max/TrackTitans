@@ -41,15 +41,16 @@ export function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen flex flex-col bg-white text-gray-900 font-sans">
+        <div className="min-h-screen flex flex-col bg-white text-slate-900 font-sans">
           <Navbar />
           <main className="flex-1 pb-16">
             <Routes>
-              {/* Home intelligent role redirect */}
-              <Route path="/" element={<HomeRedirect />} />
-
-              {/* Standalone public marketing page */}
+              {/* Landing Page as primary home view */}
+              <Route path="/" element={<LandingPage />} />
               <Route path="/landing" element={<LandingPage />} />
+
+              {/* Direct role redirect shortcut */}
+              <Route path="/dashboard" element={<HomeRedirect />} />
 
               {/* Public Auth Routes */}
               <Route path="/login" element={<Login />} />
@@ -108,14 +109,14 @@ export function App() {
             </Routes>
           </main>
           
-          <footer className="border-t border-gray-200 bg-gray-50/70 py-6 px-4 text-center text-xs text-gray-500">
+          <footer className="border-t border-slate-200 bg-white py-6 px-4 text-center text-sm text-slate-500">
             <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <span className="font-semibold text-gray-800">TrackTitans</span>
+                <span className="font-bold text-slate-900 text-sm">TrackTitans</span>
                 <span>·</span>
-                <span>Smart India Hackathon SIH26265</span>
+                <span className="text-slate-600 font-medium">Smart India Hackathon SIH26265</span>
               </div>
-              <p>Secure Institutional Security Deposit & Fixed Deposit Receipt (FDR) Lifecycle Digitization Platform</p>
+              <p className="text-slate-500">Secure Institutional Security Deposit & Fixed Deposit Receipt (FDR) Lifecycle Digitization Platform</p>
             </div>
           </footer>
         </div>

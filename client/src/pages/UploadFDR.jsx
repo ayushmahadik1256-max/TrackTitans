@@ -77,20 +77,20 @@ export function UploadFDR() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6 bg-white">
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 bg-slate-50/40">
       {/* Top Header */}
       <div className="flex items-center gap-3">
         <Link
           to="/institution"
-          className="p-2 rounded-lg bg-white hover:bg-[#F7F8FA] text-[#4B5563] border border-[#E5E7EB] transition-colors"
+          className="p-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 transition-colors shadow-2xs cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-[#111827] tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Register Institutional FDR
           </h1>
-          <p className="text-xs text-[#6B7280]">
+          <p className="text-sm text-slate-500 mt-0.5">
             Submit bank-issued fixed deposit details and upload digital certificate copy (PDF or Image)
           </p>
         </div>
@@ -99,8 +99,8 @@ export function UploadFDR() {
       <ErrorToast message={errorMessage} onDismiss={() => setErrorMessage(null)} />
 
       {successMessage && (
-        <div className="rounded-xl bg-[#F0FDF4] border border-[#BBF7D0] p-4 text-xs text-[#15803D] flex items-center gap-2.5">
-          <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0" />
+        <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-medium text-emerald-800 flex items-center gap-2.5">
+          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
           <span>{successMessage}</span>
         </div>
       )}
@@ -255,9 +255,9 @@ export function UploadFDR() {
         </div>
 
         {/* Security Declaration */}
-        <div className="rounded-xl bg-[#F7F8FA] border border-[#E5E7EB] p-4 text-xs text-[#4B5563] flex items-start gap-3">
-          <ShieldAlert className="w-5 h-5 text-[#B45309] shrink-0 mt-0.5" />
-          <p>
+        <div className="rounded-xl bg-amber-50/80 border border-amber-200 p-4 text-sm text-amber-900 flex items-start gap-3">
+          <ShieldAlert className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
             By uploading this receipt, you certify that this FDR has been executed in joint favor of the institution and the Member Secretary, AICTE, with a mandatory lien clause noted in the bank ledger. Both PDF and certified image scans are accepted.
           </p>
         </div>
@@ -266,14 +266,14 @@ export function UploadFDR() {
         <div className="flex items-center justify-end gap-3 pt-2">
           <Link
             to="/institution"
-            className="px-4 py-2 rounded-lg text-xs font-medium text-[#6B7280] hover:text-[#111827] transition-colors"
+            className="px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={loading}
-            className="px-5 py-2.5 rounded-lg bg-[#1F2937] hover:bg-[#111827] text-white font-medium text-xs flex items-center gap-2 transition-colors disabled:opacity-50"
+            className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm flex items-center gap-2 transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
           >
             {loading ? (
               <span>Uploading & Encrypting...</span>
