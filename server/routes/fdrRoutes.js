@@ -1,13 +1,13 @@
 import express from 'express';
-import { verifyFirebaseToken } from '../middleware/firebaseAuth.js';
+import { authenticate } from '../middleware/auth.js';
 import { requireRole } from '../middleware/requireRole.js';
 import { uploadFdrDocument } from '../middleware/upload.js';
 import fdrController from '../controllers/fdrController.js';
 
 const router = express.Router();
 
-// Apply Firebase token verification to all FDR routes
-router.use(verifyFirebaseToken);
+// Apply unified JWT token verification to all FDR routes
+router.use(authenticate);
 
 // 1. Submit FDR (Institution only)
 router.post(

@@ -2,14 +2,15 @@
 -- Pre-populates 3 users (one per role), institutions, banks, 10 FDR records in various lifecycle states, history, and notifications.
 
 -- 1. Insert seed users (one AICTE Admin, one Bank Manager, one College Principal)
-INSERT INTO users (id, firebase_uid, email, full_name, role, institution_name, bank_name, phone)
+-- Default initial password for all seed accounts: Password123!
+INSERT INTO users (id, password_hash, firebase_uid, email, full_name, role, institution_name, bank_name, phone)
 VALUES 
-  ('a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d', 'firebase_uid_aicte_admin_01', 'admin@aicte-india.org', 'Dr. Ramesh Sharma (AICTE Admin)', 'aicte_admin', NULL, NULL, '+91-11-29581000'),
-  ('b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e', 'firebase_uid_bank_sbi_01', 'mgr.delhi@sbi.co.in', 'Rajeev Menon (SBI Branch Manager)', 'bank', NULL, 'State Bank of India', '+91-11-23374821'),
-  ('c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f', 'firebase_uid_inst_iitd_01', 'registrar@delhitechnical.edu.in', 'Prof. Sunita Deshmukh (Delhi Tech Institute)', 'institution', 'Delhi Institute of Engineering & Technology', NULL, '+91-9876543210'),
-  ('d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a', 'firebase_uid_inst_vjti_02', 'finance@mumbaitech.ac.in', 'Dr. Arvind Verma (Mumbai Institute)', 'institution', 'Mumbai Polytechnic & Engineering College', NULL, '+91-9820012345'),
-  ('e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b', 'firebase_uid_bank_pnb_02', 'fdr.cell@pnb.co.in', 'Amit Saxena (PNB Regional Officer)', 'bank', NULL, 'Punjab National Bank', '+91-11-26123456')
-ON CONFLICT (email) DO NOTHING;
+  ('a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d', '$2b$10$j.zaR1kYUJ2uizahhcVn.Ofzx2LyO/p26slzuWcDKp35GLaecvBA2', 'firebase_uid_aicte_admin_01', 'admin@aicte-india.org', 'Dr. Ramesh Sharma (AICTE Admin)', 'aicte_admin', NULL, NULL, '+91-11-29581000'),
+  ('b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e', '$2b$10$j.zaR1kYUJ2uizahhcVn.Ofzx2LyO/p26slzuWcDKp35GLaecvBA2', 'firebase_uid_bank_sbi_01', 'mgr.delhi@sbi.co.in', 'Rajeev Menon (SBI Branch Manager)', 'bank', NULL, 'State Bank of India', '+91-11-23374821'),
+  ('c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f', '$2b$10$j.zaR1kYUJ2uizahhcVn.Ofzx2LyO/p26slzuWcDKp35GLaecvBA2', 'firebase_uid_inst_iitd_01', 'registrar@delhitechnical.edu.in', 'Prof. Sunita Deshmukh (Delhi Tech Institute)', 'institution', 'Delhi Institute of Engineering & Technology', NULL, '+91-9876543210'),
+  ('d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a', '$2b$10$j.zaR1kYUJ2uizahhcVn.Ofzx2LyO/p26slzuWcDKp35GLaecvBA2', 'firebase_uid_inst_vjti_02', 'finance@mumbaitech.ac.in', 'Dr. Arvind Verma (Mumbai Institute)', 'institution', 'Mumbai Polytechnic & Engineering College', NULL, '+91-9820012345'),
+  ('e5f6a7b8-c9d0-1e2f-3a4b-5c6d7e8f9a0b', '$2b$10$j.zaR1kYUJ2uizahhcVn.Ofzx2LyO/p26slzuWcDKp35GLaecvBA2', 'firebase_uid_bank_pnb_02', 'fdr.cell@pnb.co.in', 'Amit Saxena (PNB Regional Officer)', 'bank', NULL, 'Punjab National Bank', '+91-11-26123456')
+ON CONFLICT (email) DO UPDATE SET password_hash = EXCLUDED.password_hash;
 
 -- 2. Insert Institutions
 INSERT INTO institutions (id, user_id, aicte_application_id, institution_name, address, state, contact_email, contact_phone)

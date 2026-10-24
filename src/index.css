@@ -1,10 +1,21 @@
 @import "tailwindcss";
 main:has(.tt-landing){padding-bottom:0!important}.min-h-screen>main:has(.tt-landing)+footer{display:none}
-:root{font-size:16px;font-family:'DM Sans',sans-serif;color:#0f172a;background:#ffffff;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+:root{font-size:16px;font-family:'DM Sans',sans-serif;color:#0f172a;background:#ffffff;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;scroll-behavior:smooth;--shadow-soft:0 18px 45px rgba(15,23,42,.08),0 8px 20px rgba(37,99,235,.06);--shadow-elevated:0 20px 52px rgba(15,23,42,.12),0 10px 24px rgba(59,130,246,.08);--shadow-card:0 10px 28px rgba(15,23,42,.06),0 3px 12px rgba(15,23,42,.04)}
 *{box-sizing:border-box}
-body{margin:0;font-size:1rem;line-height:1.5;background:#ffffff;color:#0f172a}
+html{scroll-behavior:smooth}
+body{margin:0;font-size:1rem;line-height:1.5;background:radial-gradient(circle at top left,#f8fbff 0%,#ffffff 40%,#f8fafc 100%);color:#0f172a}
+#root{min-height:100vh}
 a{color:inherit;text-decoration:none}
 button{font:inherit}
+.soft-shadow{box-shadow:var(--shadow-soft)}
+.soft-card{background:rgba(255,255,255,.96);border:1px solid rgba(148,163,184,.18);box-shadow:var(--shadow-card);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.soft-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-soft);border-color:rgba(96,165,250,.35)}
+.hover-lift{transition:transform .2s ease,box-shadow .2s ease}
+.hover-lift:hover{transform:translateY(-2px);box-shadow:var(--shadow-soft)}
+.soft-input{background:rgba(255,255,255,.9);border:1px solid rgba(148,163,184,.25);box-shadow:inset 0 1px 2px rgba(15,23,42,.02);transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+.soft-input:focus{border-color:rgba(59,130,246,.7);box-shadow:0 0 0 4px rgba(59,130,246,.08);outline:none}
+.soft-button-primary{background:linear-gradient(135deg,#2563eb,#3b82f6);color:#fff;border:1px solid rgba(37,99,235,.15);box-shadow:0 14px 30px rgba(37,99,235,.22);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.soft-button-primary:hover{transform:translateY(-1px);box-shadow:0 18px 35px rgba(37,99,235,.28);filter:saturate(1.03)}
 
 /* Landing Page Wrapper with visible Grey Grid Background */
 .tt-landing{

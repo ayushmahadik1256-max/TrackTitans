@@ -52,7 +52,7 @@ export function Login() {
             </p>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 soft-card">
             <EscrowVaultVisual3D
               title="Tripartite Escrow Architecture"
               subtitle="Drag to rotate consensus rings • College · Bank · AICTE"
@@ -78,7 +78,7 @@ export function Login() {
         </div>
 
         {/* Right Column: Standard Authentication Form */}
-        <div className="lg:col-span-6 bg-white border border-slate-200 p-8 sm:p-10 rounded-2xl shadow-sm space-y-6">
+        <div className="lg:col-span-6 bg-white border border-slate-200 p-8 sm:p-10 rounded-2xl soft-card space-y-6">
           <div className="text-left">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center text-white mb-3 shadow-xs">
               <Shield className="w-6 h-6 text-white" />
@@ -107,7 +107,7 @@ export function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@institution.edu.in or bank.co.in"
-                  className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
+                  className="soft-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors"
                 />
               </div>
             </div>
@@ -124,7 +124,7 @@ export function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full rounded-xl bg-white border border-slate-200 pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 transition-colors"
+                  className="soft-input w-full rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 transition-colors"
                 />
               </div>
             </div>
@@ -132,7 +132,7 @@ export function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
+              className="w-full py-3 px-4 rounded-xl soft-button-primary hover-lift font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 mt-2"
             >
               {loading ? (
                 <span>Authenticating...</span>

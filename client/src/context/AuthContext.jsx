@@ -1,11 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from 'firebase/auth';
-import { auth, isFirebaseConfigured } from '../config/firebase.js';
 import apiClient from '../config/api.js';
 
 const AuthContext = createContext(null);
@@ -36,117 +29,80 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Sync user profile from backend PostgreSQL using Firebase ID token
-  const syncWithBackend = async (firebaseUser, profileOverrides = {}) => {
-    try {
-      const token = await firebaseUser.getIdToken();
-      localStorage.setItem(TOKEN_STORAGE_KEY, token);
-
-      const response = await apiClient.post('/auth/sync-user', {
-        role: profileOverrides.role || 'institution',
-        full_name: profileOverrides.full_name || firebaseUser.displayName || 'Authorized User',
-        institution_name: profileOverrides.institution_name || null,
-        aicte_application_id: profileOverrides.aicte_application_id || null,
-        bank_name: profileOverrides.bank_name || null,
-        branch_name: profileOverrides.branch_name || null,
-        ifsc_code: profileOverrides.ifsc_code || null,
-        phone: profileOverrides.phone || null,
-      });
-
-      const userProfile = {
-        ...response.data,
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-      };
-      setCurrentUser(userProfile);
-      return userProfile;
-    } catch (err) {
-      console.warn('Backend sync warning, fallback to local profile:', err);
-      const fallbackUser = {
-        id: firebaseUser.uid,
-        uid: firebaseUser.uid,
-        email: firebaseUser.email,
-        full_name: profileOverrides.full_name || firebaseUser.displayName || 'User',
-        role: profileOverrides.role || 'institution',
-        institution_name: profileOverrides.institution_name || null,
-        aicte_application_id: profileOverrides.aicte_application_id || null,
-        bank_name: profileOverrides.bank_name || null,
-        branch_name: profileOverrides.branch_name || null,
-        ifsc_code: profileOverrides.ifsc_code || null,
-        phone: profileOverrides.phone || null,
-      };
-      setCurrentUser(fallbackUser);
-      return fallbackUser;
-    }
-  };
-
   useEffect(() => {
     // Clean up any legacy demo state
     localStorage.removeItem('tracktitans_demo_role');
 
-    if (!isFirebaseConfigured) {
-      // Local authenticated session
+    const initializeAuth = async () => {
+      const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+      if (!token) {
+        setCurrentUser(null);
+        setLoading(false);
+        return;
+      }
+
       try {
-        const storedUser = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
-        if (storedUser) {
-          setCurrentUser(JSON.parse(storedUser));
-        } else {
+        // Verify token with backend Neon PostgreSQL API
+        const meRes = await apiClient.get('/auth/me');
+        const userProfile = meRes.user || meRes.data;
+        setCurrentUser(userProfile);
+        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(userProfile));
+      } catch (err) {
+        if (err.status === 401 || err.status === 403) {
+          // Token expired or invalid
+          localStorage.removeItem(TOKEN_STORAGE_KEY);
+          localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
           setCurrentUser(null);
+        } else {
+          // Offline fallback if backend server is starting up
+          try {
+            const stored = localStorage.getItem(CURRENT_USER_STORAGE_KEY);
+            if (stored) {
+              setCurrentUser(JSON.parse(stored));
+            } else {
+              setCurrentUser(null);
+            }
+          } catch {
+            setCurrentUser(null);
+          }
         }
-      } catch {
-        setCurrentUser(null);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-      return;
-    }
+    };
 
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const token = await firebaseUser.getIdToken();
-          localStorage.setItem(TOKEN_STORAGE_KEY, token);
-          const meRes = await apiClient.get('/auth/me');
-          setCurrentUser({
-            ...meRes.data,
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-          });
-        } catch {
-          setCurrentUser({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            role: 'institution',
-          });
-        }
-      } else {
-        setCurrentUser(null);
-        localStorage.removeItem(TOKEN_STORAGE_KEY);
-      }
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
+    initializeAuth();
   }, []);
 
-  // Standard Login
+  // Standard Login via Neon PostgreSQL (with offline fallback)
   const login = async (email, password) => {
     setError(null);
     setLoading(true);
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      if (isFirebaseConfigured) {
-        const userCredential = await signInWithEmailAndPassword(auth, normalizedEmail, password);
-        const token = await userCredential.user.getIdToken();
-        localStorage.setItem(TOKEN_STORAGE_KEY, token);
-        const meRes = await apiClient.get('/auth/me');
-        setCurrentUser({
-          ...meRes.data,
-          uid: userCredential.user.uid,
-          email: userCredential.user.email,
+      // 1. Authenticate with backend Neon DB
+      try {
+        const response = await apiClient.post('/auth/login', {
+          email: normalizedEmail,
+          password,
         });
-      } else {
-        // Local account validation
+
+        if (response && response.token) {
+          const authenticatedUser = response.user || response.data;
+          localStorage.setItem(TOKEN_STORAGE_KEY, response.token);
+          localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(authenticatedUser));
+          setCurrentUser(authenticatedUser);
+          return authenticatedUser;
+        }
+      } catch (apiErr) {
+        // If it's a real 401/400 credential error from server, throw it directly
+        if (apiErr.status === 401 || apiErr.status === 400 || apiErr.status === 403) {
+          throw apiErr;
+        }
+
+        // If backend connection is unreachable (e.g. offline dev mode), use local accounts
         const accounts = getStoredAccounts();
         const found = accounts.find((acc) => acc.email === normalizedEmail);
 
@@ -158,12 +114,13 @@ export function AuthProvider({ children }) {
           throw new Error('Incorrect password. Please verify your credentials.');
         }
 
-        const authenticatedProfile = { ...found };
-        delete authenticatedProfile.password;
+        const localProfile = { ...found };
+        delete localProfile.password;
 
-        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(authenticatedProfile));
-        localStorage.setItem(TOKEN_STORAGE_KEY, `session-token-${authenticatedProfile.role}-${Date.now()}`);
-        setCurrentUser(authenticatedProfile);
+        localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(localProfile));
+        localStorage.setItem(TOKEN_STORAGE_KEY, `local-jwt-${localProfile.role}-${Date.now()}`);
+        setCurrentUser(localProfile);
+        return localProfile;
       }
     } catch (err) {
       setError(err.message);
@@ -173,17 +130,46 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Standard Register
+  // Standard Register via Neon PostgreSQL (with offline fallback)
   const register = async (email, password, role, profileData) => {
     setError(null);
     setLoading(true);
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      if (isFirebaseConfigured) {
-        const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
-        await syncWithBackend(userCredential.user, { role, ...profileData });
-      } else {
+      // 1. Register with backend Neon DB
+      try {
+        const payload = {
+          email: normalizedEmail,
+          password,
+          role,
+          full_name: profileData.full_name || normalizedEmail.split('@')[0],
+          institution_name: role === 'institution' ? (profileData.institution_name || 'Technical Institution') : null,
+          aicte_application_id: role === 'institution' ? (profileData.aicte_application_id || 'AICTE-APP-NEW') : null,
+          bank_name: role === 'bank' ? (profileData.bank_name || 'Commercial Bank') : null,
+          branch_name: role === 'bank' ? (profileData.branch_name || 'Main Branch') : null,
+          ifsc_code: role === 'bank' ? (profileData.ifsc_code || 'BANK0000001') : null,
+          phone: profileData.phone || '',
+          address: profileData.address || null,
+          state: profileData.state || null,
+        };
+
+        const response = await apiClient.post('/auth/register', payload);
+
+        if (response && response.token) {
+          const registeredUser = response.user || response.data;
+          localStorage.setItem(TOKEN_STORAGE_KEY, response.token);
+          localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(registeredUser));
+          setCurrentUser(registeredUser);
+          return registeredUser;
+        }
+      } catch (apiErr) {
+        // If conflict error (409) or bad request (400), propagate
+        if (apiErr.status === 409 || apiErr.status === 400) {
+          throw apiErr;
+        }
+
+        // If backend connection is unreachable (e.g. offline dev mode), use local store
         const accounts = getStoredAccounts();
         const existing = accounts.find((acc) => acc.email === normalizedEmail);
         if (existing) {
@@ -192,7 +178,6 @@ export function AuthProvider({ children }) {
 
         const newUser = {
           id: `usr-${Date.now()}`,
-          uid: `uid-${Date.now()}`,
           email: normalizedEmail,
           role,
           full_name: profileData.full_name || normalizedEmail.split('@')[0],
@@ -204,14 +189,13 @@ export function AuthProvider({ children }) {
           phone: profileData.phone || '',
         };
 
-        // Save account with password for local verification
         accounts.push({ ...newUser, password });
         saveStoredAccounts(accounts);
 
-        // Save current session
         localStorage.setItem(CURRENT_USER_STORAGE_KEY, JSON.stringify(newUser));
-        localStorage.setItem(TOKEN_STORAGE_KEY, `session-token-${role}-${Date.now()}`);
+        localStorage.setItem(TOKEN_STORAGE_KEY, `local-jwt-${role}-${Date.now()}`);
         setCurrentUser(newUser);
+        return newUser;
       }
     } catch (err) {
       setError(err.message);
@@ -223,13 +207,6 @@ export function AuthProvider({ children }) {
 
   // Logout
   const logout = async () => {
-    try {
-      if (isFirebaseConfigured) {
-        await signOut(auth);
-      }
-    } catch (err) {
-      console.warn('Firebase signout error:', err);
-    }
     localStorage.removeItem(CURRENT_USER_STORAGE_KEY);
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem('tracktitans_demo_role');

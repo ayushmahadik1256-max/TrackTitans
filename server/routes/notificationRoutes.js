@@ -1,13 +1,13 @@
 import express from 'express';
 import { query } from '../config/db.js';
-import { verifyFirebaseToken } from '../middleware/firebaseAuth.js';
+import { authenticate } from '../middleware/auth.js';
 import { sendAndLogNotification } from '../services/notificationService.js';
 import { sendEmail, mailFrom, isMailerConfigured } from '../config/mailer.js';
 import logger from '../utils/logger.js';
 
 const router = express.Router();
 
-router.use(verifyFirebaseToken);
+router.use(authenticate);
 
 /**
  * Trigger simulated email alert for an FDR within 30 days using Nodemailer

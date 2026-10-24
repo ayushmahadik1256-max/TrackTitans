@@ -5,11 +5,12 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- 1. USERS TABLE
+-- 1. USERS TABLE (Unified Neon PostgreSQL Authentication with bcrypt & JWT)
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    firebase_uid VARCHAR(128) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255),
+    firebase_uid VARCHAR(128) UNIQUE,
     full_name VARCHAR(255),
     role VARCHAR(32) NOT NULL CHECK (role IN ('institution', 'bank', 'aicte_admin')),
     institution_name VARCHAR(255),
@@ -19,6 +20,24 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Backward compatibility & schema migration guard for existing Neon DB instances
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'password_hash'
+    ) THEN
+        ALTER TABLE users ADD COLUMN password_hash VARCHAR(255);
+    END IF;
+
+    IF EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_name = 'users' AND column_name = 'firebase_uid' AND is_nullable = 'NO'
+    ) THEN
+        ALTER TABLE users ALTER COLUMN firebase_uid DROP NOT NULL;
+    END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS idx_users_firebase_uid ON users(firebase_uid);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);

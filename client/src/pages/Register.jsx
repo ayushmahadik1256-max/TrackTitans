@@ -67,7 +67,7 @@ export function Register() {
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-slate-50/60">
-      <div className="max-w-xl w-full space-y-6 bg-white border border-slate-200 p-8 rounded-2xl shadow-sm">
+      <div className="max-w-xl w-full space-y-6 bg-white border border-slate-200 p-8 rounded-2xl soft-card">
         <div className="text-left">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-500 flex items-center justify-center text-white mb-3 shadow-xs">
             <Shield className="w-6 h-6 text-white" />
@@ -138,7 +138,7 @@ export function Register() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Prof. Sunita Deshmukh"
-                  className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                  className="soft-input w-full rounded-lg pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                 />
               </div>
             </div>
@@ -154,7 +154,7 @@ export function Register() {
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="+91-9876543210"
-                  className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                  className="soft-input w-full rounded-lg pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                 />
               </div>
             </div>
@@ -173,7 +173,7 @@ export function Register() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="officer@domain.edu.in"
-                  className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                  className="soft-input w-full rounded-lg pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                 />
               </div>
             </div>
@@ -190,7 +190,7 @@ export function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full rounded-lg bg-white border border-[#E5E7EB] pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                  className="soft-input w-full rounded-lg pl-9 pr-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                 />
               </div>
             </div>
@@ -213,7 +213,7 @@ export function Register() {
                     value={institutionName}
                     onChange={(e) => setInstitutionName(e.target.value)}
                     placeholder="Delhi Institute of Engineering"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                   />
                 </div>
                 <div>
@@ -226,7 +226,7 @@ export function Register() {
                     value={aicteAppId}
                     onChange={(e) => setAicteAppId(e.target.value)}
                     placeholder="AICTE-1-9321482910"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                   />
                 </div>
               </div>
@@ -240,7 +240,7 @@ export function Register() {
                     value={state}
                     onChange={(e) => setState(e.target.value)}
                     placeholder="Delhi"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                   />
                 </div>
                 <div>
@@ -252,7 +252,7 @@ export function Register() {
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     placeholder="Sector 12, Dwarka"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                   />
                 </div>
               </div>
@@ -276,7 +276,7 @@ export function Register() {
                     value={bankName}
                     onChange={(e) => setBankName(e.target.value)}
                     placeholder="State Bank of India"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                   />
                 </div>
                 <div>
@@ -289,7 +289,7 @@ export function Register() {
                     value={branchName}
                     onChange={(e) => setBranchName(e.target.value)}
                     placeholder="Parliament Street Branch"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937]"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF]"
                   />
                 </div>
                 <div>
@@ -302,7 +302,7 @@ export function Register() {
                     value={ifscCode}
                     onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
                     placeholder="SBIN0000691"
-                    className="w-full rounded-lg bg-white border border-[#E5E7EB] px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] focus:outline-none focus:border-[#1F2937] font-mono"
+                    className="soft-input w-full rounded-lg px-3 py-2 text-xs text-[#111827] placeholder-[#9CA3AF] font-mono"
                   />
                 </div>
               </div>
@@ -312,7 +312,7 @@ export function Register() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm py-3 px-4 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 shadow-xs cursor-pointer"
+            className="w-full mt-4 rounded-xl soft-button-primary hover-lift font-semibold text-sm py-3 px-4 flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {loading ? (
               <span>Registering Profile...</span>

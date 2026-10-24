@@ -1,20 +1,9 @@
-import { auth } from './firebase.js';
-
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 /**
- * Helper to retrieve currently authenticated Firebase ID token or active mock token
+ * Helper to retrieve currently authenticated session JWT token
  */
-export async function getAuthToken() {
-  try {
-    if (auth.currentUser) {
-      return await auth.currentUser.getIdToken();
-    }
-  } catch (err) {
-    console.warn('Failed to retrieve Firebase ID token:', err);
-  }
-
-  // Check localStorage for active session token
+export function getAuthToken() {
   return localStorage.getItem('tracktitans_token') || '';
 }
 

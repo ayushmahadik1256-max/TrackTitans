@@ -75,7 +75,7 @@ export function InstitutionSummaryDashboard({
       {/* Central Overview Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Active FDRs */}
-        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-5 shadow-xs">
+        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-5 soft-card hover-lift">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#4B5563] uppercase tracking-wider">
               Active Compliant FDRs
@@ -95,7 +95,7 @@ export function InstitutionSummaryDashboard({
         </div>
 
         {/* Card 2: Total Locked Deposit Value */}
-        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-5 shadow-xs">
+        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-5 soft-card hover-lift">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#4B5563] uppercase tracking-wider">
               Total Locked Deposit Value
@@ -114,7 +114,7 @@ export function InstitutionSummaryDashboard({
         </div>
 
         {/* Card 3: Upcoming Maturity Alerts */}
-        <div className={`rounded-2xl bg-white border p-5 shadow-xs ${
+        <div className={`rounded-2xl bg-white border p-5 soft-card hover-lift ${
           critical7Days.length > 0
             ? 'border-[#FECACA] bg-[#FEF2F2]/30'
             : totalUpcomingAlerts > 0
@@ -154,7 +154,7 @@ export function InstitutionSummaryDashboard({
         </div>
 
         {/* Card 4: AICTE Lien Compliance Health */}
-        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-5 shadow-xs">
+        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-5 soft-card hover-lift">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-semibold text-[#4B5563] uppercase tracking-wider">
               Lien Marking Compliance
@@ -187,7 +187,7 @@ export function InstitutionSummaryDashboard({
 
       {/* 2. Central Maturity Alert Command Center with Simulated Email Trigger */}
       {totalUpcomingAlerts > 0 ? (
-        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-6 shadow-xs space-y-4">
+        <div className="rounded-2xl bg-white border border-[#E5E7EB] p-6 soft-card space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E5E7EB]">
             <div>
               <div className="flex items-center gap-2 text-xs font-semibold text-[#B45309] tracking-tight mb-0.5">

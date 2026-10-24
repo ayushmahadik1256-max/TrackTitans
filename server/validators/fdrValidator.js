@@ -61,8 +61,36 @@ export const adminReleaseDecisionSchema = z.object({
   notes: z.string().min(3, 'Admin notes are required for FDR release decision').max(1000),
 });
 
+/**
+ * Validator for User Registration (Neon DB Native Auth)
+ */
+export const registerUserSchema = z.object({
+  email: z.string().email('Valid email address is required'),
+  password: z.string().min(6, 'Password must be at least 6 characters'),
+  role: z.enum(['institution', 'bank', 'aicte_admin']),
+  full_name: z.string().min(2, 'Full name must have at least 2 characters').max(255).optional().nullable(),
+  institution_name: z.string().max(255).optional().nullable(),
+  aicte_application_id: z.string().max(100).optional().nullable(),
+  bank_name: z.string().max(255).optional().nullable(),
+  branch_name: z.string().max(255).optional().nullable(),
+  ifsc_code: z.string().optional().nullable(),
+  address: z.string().max(500).optional().nullable(),
+  state: z.string().max(100).optional().nullable(),
+  phone: z.string().max(32).optional().nullable(),
+});
+
+/**
+ * Validator for User Login (Neon DB Native Auth)
+ */
+export const loginUserSchema = z.object({
+  email: z.string().email('Valid email address is required'),
+  password: z.string().min(1, 'Password is required'),
+});
+
 export default {
   syncUserSchema,
+  registerUserSchema,
+  loginUserSchema,
   createFdrSchema,
   bankVerifySchema,
   releaseRequestSchema,

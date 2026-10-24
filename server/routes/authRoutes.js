@@ -1,13 +1,19 @@
 import express from 'express';
-import { verifyFirebaseToken } from '../middleware/firebaseAuth.js';
+import { authenticate } from '../middleware/auth.js';
 import authController from '../controllers/authController.js';
 
 const router = express.Router();
 
-// Synchronize or create user profile with role assignment
-router.post('/sync-user', verifyFirebaseToken, authController.syncUser);
+// 1. Native Neon PostgreSQL registration with bcrypt password hashing
+router.post('/register', authController.register);
 
-// Retrieve current authenticated user profile
-router.get('/me', verifyFirebaseToken, authController.getMe);
+// 2. Native Neon PostgreSQL authentication with JWT token issuance
+router.post('/login', authController.login);
+
+// 3. Retrieve current authenticated user profile
+router.get('/me', authenticate, authController.getMe);
+
+// 4. Legacy sync user profile endpoint (backward compatibility)
+router.post('/sync-user', authenticate, authController.syncUser);
 
 export default router;

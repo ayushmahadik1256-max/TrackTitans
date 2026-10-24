@@ -517,10 +517,10 @@ export function LandingPage() {
                 <b>GET STARTED</b>
                 {currentUser ? (
                   <>
-                    <button onClick={() => handleManualDivert()} className="text-left text-slate-500 hover:text-blue-500 text-[9px] cursor-pointer">
+                    <button onClick={() => handleManualDivert()} className="text-left text-slate-500 hover:text-blue-600 text-xs font-medium cursor-pointer">
                       Dashboard
                     </button>
-                    <button onClick={handleLogout} className="text-left text-slate-500 hover:text-red-500 text-[9px] cursor-pointer">
+                    <button onClick={handleLogout} className="text-left text-slate-500 hover:text-rose-600 text-xs font-medium cursor-pointer">
                       Log out
                     </button>
                   </>

@@ -30,7 +30,7 @@ export function Navbar() {
   if (location.pathname === '/' || location.pathname === '/landing') return null;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-xs">
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md soft-shadow">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 gap-8">
           {/* Zone 1: Brand & Logo */}
@@ -131,7 +131,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsEmailModalOpen(true)}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer hover-lift"
                   title="Open Nodemailer Email Notification Outbox"
                 >
                   <Mail className="w-4 h-4" />
@@ -140,7 +140,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={handleLogout}
-                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 transition-colors cursor-pointer"
+                  className="p-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-600 border border-slate-200 transition-colors cursor-pointer hover-lift"
                   title="Sign out of TrackTitans"
                 >
                   <LogOut className="w-4 h-4" />
@@ -156,7 +156,7 @@ export function Navbar() {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 text-sm font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs"
+                  className="px-4 py-2 text-sm font-semibold rounded-xl soft-button-primary hover-lift"
                 >
                   Register
                 </Link>

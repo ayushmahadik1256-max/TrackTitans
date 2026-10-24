@@ -7,7 +7,7 @@ import fdrRoutes from './routes/fdrRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
-import { verifyFirebaseToken } from './middleware/firebaseAuth.js';
+import { authenticate } from './middleware/auth.js';
 import { requireRole } from './middleware/requireRole.js';
 import { startMaturityAlertJob, runMaturityCheck } from './jobs/maturityAlertJob.js';
 import logger from './utils/logger.js';
@@ -59,7 +59,7 @@ app.use('/api/notifications', notificationRoutes);
 // 6. Manual trigger for testing maturity cron job (AICTE Admin or dev)
 app.post(
   '/api/jobs/trigger-maturity-check',
-  verifyFirebaseToken,
+  authenticate,
   requireRole('aicte_admin'),
   async (req, res, next) => {
     try {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { verifyFirebaseToken } from '../middleware/firebaseAuth.js';
+import { authenticate } from '../middleware/auth.js';
 import { requireRole } from '../middleware/requireRole.js';
 import analyticsController from '../controllers/analyticsController.js';
 
@@ -8,7 +8,7 @@ const router = express.Router();
 // AICTE admin summary and KPIs
 router.get(
   '/summary',
-  verifyFirebaseToken,
+  authenticate,
   requireRole('aicte_admin'),
   analyticsController.getSummary
 );

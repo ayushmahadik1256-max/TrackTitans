@@ -97,7 +97,7 @@ export function FdrTable({
 
   if (!fdrs || fdrs.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500 shadow-xs">
+      <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-slate-500 soft-card">
         <FileText className="w-12 h-12 mx-auto mb-3 text-slate-400" />
         <h4 className="font-bold text-slate-900 text-base mb-1">No FDR Records Found</h4>
         <p className="text-sm text-slate-500 max-w-sm mx-auto">
@@ -108,7 +108,7 @@ export function FdrTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white soft-card">
       <table className="w-full text-left border-collapse text-sm">
         <thead>
           <tr className="border-b border-slate-200 bg-slate-50/90 font-bold text-xs uppercase tracking-wider text-slate-600">
@@ -191,7 +191,7 @@ export function FdrTable({
                     type="button"
                     onClick={(e) => handleDownload(e, fdr)}
                     disabled={downloadingId === fdr.id}
-                    className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
+                    className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors hover-lift"
                     title="Download FDR Certificate (PDF / Image)"
                   >
                     <Download className={`w-4 h-4 ${downloadingId === fdr.id ? 'animate-bounce' : ''}`} />
@@ -199,7 +199,7 @@ export function FdrTable({
 
                   <Link
                     to={`/fdrs/${fdr.id}`}
-                    className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs"
+                    className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors hover-lift"
                     title="View Lifecycle Audit Trail"
                   >
                     <ExternalLink className="w-4 h-4" />
@@ -209,7 +209,7 @@ export function FdrTable({
                     <button
                       type="button"
                       onClick={() => onActionClick(fdr)}
-                      className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors shadow-xs cursor-pointer"
+                      className="px-3 py-1.5 text-xs font-semibold rounded-lg soft-button-primary hover-lift cursor-pointer"
                     >
                       {actionButtonLabel || 'Action'}
                     </button>
